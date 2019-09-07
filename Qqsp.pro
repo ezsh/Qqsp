@@ -54,6 +54,7 @@ HEADERS += \
     videolabel.h
 
 FORMS += \
+    mainwindow.ui \
     optionsdialog.ui
 
 TRANSLATIONS = Qqsp.en.ts \

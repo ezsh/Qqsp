@@ -26,12 +26,17 @@
 #include "androidfiledialog.h"
 #endif
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+#include "ui_mainwindow.h"
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , _ui(new Ui::MainWindow())
 {
+    _ui->setupUi(this);
+
     resize(600, 450);
     setMinimumSize(240, 180);
     setWindowTitle(QSP_LOGO);
-    setWindowIcon(QIcon(":/gfx/logo"));
     setUnifiedTitleAndToolBarOnMac(true);
     setDockNestingEnabled(true);
     setFocusPolicy(Qt::StrongFocus);
@@ -47,13 +52,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     m_palette = palette();
 
-    mainMenuBar = new QMenuBar(this);
-    setMenuBar(mainMenuBar);
-    mainMenuBar->setObjectName(QStringLiteral("mainMenuBar"));
-    mainMenuBar->setVisible(true);
-    mainToolBar = new QToolBar(this);
-    mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
-    addToolBar(mainToolBar);
     //mainStatusBar = new QStatusBar(this);
     //mainStatusBar->setObjectName(QStringLiteral("mainStatusBar"));
     //setStatusBar(mainStatusBar);
@@ -64,8 +62,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     //setGeometry(rect);
 
     //mainStatusBar->setVisible(false);
-    mainToolBar->setVisible(false);
-    mainToolBar->setWindowTitle(tr("ToolBar"));
+    _ui->mainToolBar->setVisible(false);
 
     m_timer = new QTimer(this);
     m_timer->setObjectName(QStringLiteral("m_timer"));
@@ -155,15 +152,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 MainWindow::~MainWindow()
 {
-
+    delete _ui;
 }
 
 void MainWindow::EnableControls(bool status, bool isExtended)
 {
-    if (isExtended) _fileMenu->setEnabled(status); //TODO: ???
-    _fileMenu->setEnabled(status); //TODO: ???
-    _gameMenu->setEnabled(status);
-    _settingsMenu->setEnabled(status);
+    if (isExtended) _ui->_fileMenu->setEnabled(status); //TODO: ???
+    _ui->_fileMenu->setEnabled(status); //TODO: ???
+    _ui->_gameMenu->setEnabled(status);
+    _ui->_settingsMenu->setEnabled(status);
     _objectsListBox->setEnabled(status);
     _actionsListBox->setEnabled(status);
     _inputTextBox->setEnabled(status);
@@ -361,6 +358,11 @@ void MainWindow::ShowError()
     dialog.exec();
     m_isProcessEvents = oldIsProcessEvents;
     if (m_isGameOpened) QSPCallBacks::RefreshInt(QSP_FALSE);
+}
+
+QMenu* MainWindow::GetGameMenu() const
+{
+    return _ui->_gameMenu;
 }
 
 void MainWindow::SetShowPlainText(bool isPlain)
@@ -594,103 +596,61 @@ void MainWindow::SaveSettings(QString filePath)
 
 void MainWindow::CreateMenuBar()
 {
-    QAction* action;
-    //------------------------------------------------------------------
-    // File menu
-    _fileMenu = menuBar()->addMenu(tr("&Quest"));
-
     // Open item
-    action = _fileMenu->addAction(QIcon(":/gfx/menu/open"), tr("Open game..."),
-        this, SLOT(OnOpenGame()), QKeySequence(Qt::ALT + Qt::Key_O));
-    mainToolBar->addAction(action);
-
+    connect(_ui->actionOpen_game, &QAction::triggered, this, &ThisType::OnOpenGame);
     // New game item
-    action = _fileMenu->addAction(QIcon(":/gfx/menu/new"),tr("Restart game"),
-        this, SLOT(OnRestartGame()), QKeySequence(Qt::ALT + Qt::Key_N));
-    mainToolBar->addAction(action);
-
-    _fileMenu->addSeparator();
-    mainToolBar->addSeparator();
-
+    connect(_ui->actionRestart_game, &QAction::triggered, this, &ThisType::OnRestartGame);
     // Exit item
-    action = _fileMenu->addAction(QIcon(":/gfx/menu/exit"), tr("Exit"),
-        this, SLOT(close()), QKeySequence(Qt::ALT + Qt::Key_X));
-    mainToolBar->addAction(action);
-    //------------------------------------------------------------------
-    mainToolBar->addSeparator();
-    // Game menu
-    _gameMenu = menuBar()->addMenu(tr("&Game"));
-
+    connect(_ui->actionExit, &QAction::triggered, this, &ThisType::close);
     // Open saved game item
-    action =  _gameMenu->addAction(QIcon(":/gfx/menu/statusopen"), tr("Open saved game..."),
-        this, SLOT(OnOpenSavedGame()), QKeySequence(Qt::CTRL + Qt::Key_O));
-    mainToolBar->addAction(action);
+    connect(_ui->actionOpen_saved_game, &QAction::triggered, this, &ThisType::OnOpenSavedGame);
     // Save game item
-    action =  _gameMenu->addAction(QIcon(":/gfx/menu/statussave"), tr("Save game..."),
-        this, SLOT(OnSaveGame()), QKeySequence(Qt::CTRL + Qt::Key_S));
-    mainToolBar->addAction(action);
+    connect(_ui->actionSave_game, &QAction::triggered, this, &ThisType::OnSaveGame);
     // Open quicksave item
-    action =  _gameMenu->addAction(tr("Quick Load"),
-        this, SLOT(OnOpenQuickSavedGame()), QKeySequence(Qt::Key_F9));
-    mainToolBar->addAction(action);
+    connect(_ui->actionQuick_load, &QAction::triggered, this, &ThisType::OnOpenQuickSavedGame);
     // Quicksave item
-    action =  _gameMenu->addAction(tr("Quick Save"),
-        this, SLOT(OnQuickSaveGame()), QKeySequence(Qt::Key_F5));
-    mainToolBar->addAction(action);
-    //------------------------------------------------------------------
-    mainToolBar->addSeparator();
-    // Settings menu
-    _settingsMenu = menuBar()->addMenu(tr("&Settings"));
-
-    // Show / Hide submenu
-    _showHideMenu = _settingsMenu->addMenu(tr("Show / Hide"));
-
+    connect(_ui->actionQuick_save, &QAction::triggered, this, &ThisType::OnQuickSaveGame);
     // Objects item
+    QAction* action;
+    QAction* before = _ui->_showHideMenu->insertSeparator(_ui->actionCaptions);
+
     action = _objectsWidget->toggleViewAction();
     action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
-    _showHideMenu->addAction(action);
+    _ui->_showHideMenu->insertAction(before, action);
 
     // Actions item
     action = _actionsWidget->toggleViewAction();
     action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
-    _showHideMenu->addAction(action);
+    _ui->_showHideMenu->insertAction(before, action);
 
     // Additional desc item
     action = _descWidget->toggleViewAction();
     action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
-    _showHideMenu->addAction(action);
+    _ui->_showHideMenu->insertAction(before, action);
 
     // Input area item
     action = _inputWidget->toggleViewAction();
     action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
-    _showHideMenu->addAction(action);
+    _ui->_showHideMenu->insertAction(before, action);
 
     // Main desc item
     action = _mainDescWidget->toggleViewAction();
     action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_5));
-    _showHideMenu->addAction(action);
+    _ui->_showHideMenu->insertAction(before, action);
 
     // Image item
     action = _imgViewWidget->toggleViewAction();
     action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_6));
-    _showHideMenu->addAction(action);
-
-    _showHideMenu->addSeparator();
+    _ui->_showHideMenu->insertAction(before, action);
 
     // Captions item
-    action = _showHideMenu->addAction(tr("Captions"));
-    action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_6));
-    action->setCheckable(true);
-    if(_objectsWidget->titleBarWidget() == 0)
-        action->setChecked(true);
-    else
-        action->setChecked(false);
-    connect(action, SIGNAL(toggled(bool)), this, SLOT(OnToggleCaptions(bool)));
+    _ui->actionCaptions->setChecked(_objectsWidget->titleBarWidget() == 0);
+    connect(_ui->actionCaptions, &QAction::triggered, this, &ThisType::OnToggleCaptions);
 
     // ToolBar
-    action = mainToolBar->toggleViewAction();
+    action = _ui->mainToolBar->toggleViewAction();
     action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_7));
-    _showHideMenu->addAction(action);
+    _ui->_showHideMenu->addAction(action);
 
     //TODO: MenuBar
     // MenuBar
@@ -704,44 +664,26 @@ void MainWindow::CreateMenuBar()
     //connect(action, SIGNAL(toggled(bool)), this, SLOT(OnToggleMenuBar(bool)));
 
     // Hotkeys for actions item
-    action = _showHideMenu->addAction(tr("Hotkeys for actions"));
-    action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_8));
-    action->setCheckable(true);
-    action->setChecked(m_isShowHotkeys);
-    connect(action, SIGNAL(toggled(bool)), this, SLOT(OnToggleHotkeys(bool)));
+    _ui->actionHotkeys_for_actions->setChecked(m_isShowHotkeys);
+    connect(_ui->actionHotkeys_for_actions, &QAction::triggered, this, &ThisType::OnToggleHotkeys);
 
     // Window / Fullscreen mode item
-    action = _settingsMenu->addAction(QIcon(":/gfx/menu/windowmode"), tr("Window / Fullscreen mode"),
-        this, SLOT(OnToggleWinMode()), QKeySequence(Qt::Key_F11));
-    mainToolBar->addAction(action);
-
-    _settingsMenu->addSeparator();
-    mainToolBar->addSeparator();
+    connect(_ui->actionWindow_Fullscreen_mode, &QAction::triggered, this, &ThisType::OnToggleWinMode);
 
     // Display HTML code as plain text
-    action = _settingsMenu->addAction(tr("Display HTML code as plain text"));
-    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D));
-    action->setCheckable(true);
-    action->setChecked(showPlainText);
-    connect(action, SIGNAL(toggled(bool)), this, SLOT(OnToggleShowPlainText(bool)));
+    connect(_ui->actionDisplay_HTML_code_as_plain_text, &QAction::triggered, this, &ThisType::OnToggleShowPlainText);
+    _ui->actionDisplay_HTML_code_as_plain_text->setChecked(showPlainText);
 //    _settingsMenu->addAction(tr("Display HTML code as plain text"),
 //        this, SLOT(OnToggleShowPlainText()), QKeySequence(Qt::ALT + Qt::Key_D))->setCheckable(true);
 
-    _settingsMenu->addSeparator();
-
     // Options item
-    action =  _settingsMenu->addAction(tr("Options..."),
-        this, SLOT(OnOptions()), QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_O));
+    connect(_ui->actionOptions, &QAction::triggered, this, &ThisType::OnOptions);
     //mainToolBar->addAction(action);
     //------------------------------------------------------------------
     //mainToolBar->addSeparator();
     // Help menu
-    QMenu* helpMenu(menuBar()->addMenu(tr("&Help")));
-
     // About item
-    action =  helpMenu->addAction(QIcon(":/gfx/menu/about"), tr("About..."),
-        this, SLOT(OnAbout()), QKeySequence(Qt::CTRL + Qt::Key_H));
-    mainToolBar->addAction(action);
+    connect(_ui->actionAbout, &QAction::triggered, this, &ThisType::OnAbout);
 }
 
 void MainWindow::CreateDockWindows()
@@ -1262,7 +1204,7 @@ void MainWindow::OnToggleCaptions(bool checked)
 
 void MainWindow::OnToggleMenuBar(bool checked)
 {
-    mainMenuBar->setVisible(checked);
+    _ui->mainMenuBar->setVisible(checked);
 }
 
 void MainWindow::OnToggleHotkeys(bool checked)

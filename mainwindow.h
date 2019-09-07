@@ -49,6 +49,7 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    using ThisType = MainWindow;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -86,7 +87,7 @@ public:
     void SetLastPath(const QString &path) { lastPath = path; }
 
     QspImgCanvas *GetImgView() const { return m_imgView; }
-    QMenu *GetGameMenu() const { return _gameMenu; }
+    QMenu *GetGameMenu() const;
     bool IsShowHotkeys() const { return m_isShowHotkeys; }
     bool IsQuit() const { return m_isQuit; }
     bool IsKeyPressedWhileDisabled() const { return m_keyPressedWhileDisabled; }
@@ -151,13 +152,8 @@ private:
     bool ApplyBackColor(const QColor& color);
     bool ApplyLinkColor(const QColor& color);
 
-    QMenuBar*       mainMenuBar;
-    QToolBar*       mainToolBar;
+    Ui::MainWindow* _ui;
     //QStatusBar*     mainStatusBar;
-    QMenu*			_fileMenu; // was wxMenu *m_fileMenu;
-    QMenu*			_gameMenu; // was wxMenu *m_gameMenu;
-    QMenu*			_settingsMenu; // was wxMenu *m_settingsMenu;
-    QMenu*			_showHideMenu; //Show / Hide submenu
 #ifndef _WEBBOX_COMMON
     QspTextBox*		_mainDescTextBox; //m_desc
     QspTextBox*		_descTextBox; //m_vars ID_VARSDESC
