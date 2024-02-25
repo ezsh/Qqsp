@@ -1,8 +1,10 @@
 #include "comtools.h"
 
+#include <QByteArray>
 #include <QCoreApplication>
 #include <QDir>
 #include <QDirIterator>
+#include <QFile>
 
 QHash<QString, QString> QSPTools::file_list;
 QString QSPTools::file_path;
@@ -214,13 +216,27 @@ QString QSPTools::GetCaseInsensitiveAbsoluteFilePath(QString  searchDir, QString
     return new_name;
 }
 
-QString QSPTools::qspStrToQt(const QSP_CHAR *str)
+QString QSPTools::qspStrToQt(const QSPString& str)
 {
-    //return QString::fromWCharArray(str.Str, (int)(str.End - str.Str));
-    if(str == 0)
+//    return QString::fromWCharArray(str.Str, (int)(str.End - str.Str));
+    if(str.Str == nullptr)
         return QString("");
     else
-        return QString::fromUtf16(str);
+        return QString::fromWCharArray(str.Str, (int)(str.End - str.Str));
+}
+
+void QSPTools::qtStrToQspBuffer(const QString& str, QSP_CHAR* buffer, int bufLen)
+{
+    if (bufLen < 1) {
+        return;
+    }
+#ifdef _UNICODE
+    const auto stdStr = str.toStdWString();
+#else
+    const auto stdStr = str.toStdString();
+#endif
+    int charsToCopy = qMin(str.size() + 1, bufLen);
+    memccpy(buffer, stdStr.c_str(), sizeof(QSP_CHAR), charsToCopy);
 }
 
 QColor QSPTools::wxtoQColor(int wxColor)
@@ -236,4 +252,37 @@ QColor QSPTools::wxtoQColor(int wxColor)
     col.setRed(col.blue());
     col.setBlue(red);
     return col;
+}
+
+namespace {
+    using qspObjectGetter = int (QSPListItem* items, int bufferSize);
+
+    std::vector<QSPListItem> listQspItems(qspObjectGetter getter)
+    {
+        int count = getter(nullptr, 0);
+        std::vector<QSPListItem> res(count);
+        getter(res.data(), res.size());
+        return res;
+    }
+}
+
+std::vector<QSPListItem> QSPTools::qspActions()
+{
+    return listQspItems(QSPGetActions);
+}
+
+std::vector<QSPListItem> QSPTools::qspObjects()
+{
+    return listQspItems(QSPGetObjects);
+}
+
+bool QSPTools::loadGameFile(QString path)
+{
+    QFile inp{path};
+    if (!inp.open(QIODevice::ReadOnly)) {return false;}
+    const auto fileSize = static_cast<int>(inp.size());
+    QByteArray data{fileSize + 3, Qt::Uninitialized};
+    inp.read(data.data(), inp.size());
+    data[fileSize] = data[fileSize + 1] = data[fileSize + 2] = 0;
+    return QSPLoadGameWorldFromData(data.data(), data.size(), QSP_TRUE);
 }

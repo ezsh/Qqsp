@@ -5,6 +5,7 @@
 #include <qsp_default.h>
 #include "callbacks_gui.h"
 #include "comtools.h"
+#include "qspstr.h"
 
 QspWebChannel::QspWebChannel(QObject *parent) : QObject(parent)
 {
@@ -13,18 +14,18 @@ QspWebChannel::QspWebChannel(QObject *parent) : QObject(parent)
 
 void QspWebChannel::ExecString(const QString &string)
 {
-    if (!QSPExecString(qspStringFromQString(string), QSP_TRUE))
+    if (!QSPExecString(QSPStr(string), QSP_TRUE))
         ShowError();
 }
 
 void QspWebChannel::ShowError()
 {
     QString errorMessage;
-    QSP_CHAR *loc;
+    QSPString loc;
     int code, actIndex, line;
     QSPGetLastErrorData(&code, &loc, &actIndex, &line);
     QString desc = QSPTools::qspStrToQt(QSPGetErrorDesc(code));
-    if (loc)
+    if (loc.Str)
         errorMessage = QString("Location: %1\nArea: %2\nLine: %3\nCode: %4\nDesc: %5")
                 .arg(QSPTools::qspStrToQt(loc))
                 .arg(actIndex < 0 ? QString("on visit") : QString("on action"))

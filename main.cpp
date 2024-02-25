@@ -16,6 +16,12 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+#ifdef _WEBBOX
+    register_url_schemes();
+    QtWebEngine::initialize();
+#endif
+
     QApplication a(argc, argv);
     a.setApplicationName("Qqsp");
     a.setOrganizationName("Qqsp");
@@ -51,11 +57,6 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.addVersionOption();
     parser.process(a);
-
-#ifdef _WEBBOX
-    register_url_schemes();
-    QtWebEngine::initialize();
-#endif
 
     MainWindow w;
 

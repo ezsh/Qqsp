@@ -25,13 +25,14 @@ typedef QMap<QString, QMediaPlayer*> QSPSounds;
 //    return string;
 //}
 
-static const QSP_CHAR *qspStringFromQString(const QString &s)
-{
-    //QSPString string;
-    //string.Str = (QSP_CHAR *)s.utf16();
-    //string.End = (QSP_CHAR *)s.utf16() + s.length();
-    return (QSP_CHAR *)s.utf16();
-}
+// static const QSPString qspStringFromQString(const QString &s)
+// {
+//     //QSPString string;
+//     //string.Str = (QSP_CHAR *)s.utf16();
+//     //string.End = (QSP_CHAR *)s.utf16() + s.length();
+//    // return (QSP_CHAR *)s.utf16();
+//     return {(QSP_CHAR *)s.utf16(), (QSP_CHAR *)s.utf16() + s.length()};
+// }
 
 class QSPCallBacks
 {
@@ -45,28 +46,30 @@ public:
     // CallBacks
     static void RefreshInt(QSP_BOOL isRedraw);
     static void SetTimer(int msecs);
-    static void SetInputStrText(const QSP_CHAR *text);
-    static QSP_BOOL IsPlay(const QSP_CHAR *file);
-    static void CloseFile(const QSP_CHAR *file);
-    static void PlayFile(const QSP_CHAR *file, int volume);
+    static void SetInputStrText(QSPString text);
+    static QSP_BOOL IsPlay(QSPString file);
+    static void CloseFile(QSPString file);
+    static void PlayFile(QSPString file, int volume);
     static void ShowPane(int type, QSP_BOOL isShow);
     static void Sleep(int msecs);
     static int GetMSCount();
-    static void Msg(const QSP_CHAR *str);
+    static void Msg(QSPString str);
     static void DeleteMenu();
-    static void AddMenuItem(const QSP_CHAR *name, const QSP_CHAR *imgPath);
-    static int ShowMenu();
-    static void Input(const QSP_CHAR *text, QSP_CHAR *buffer, int maxLen);
-    static void ShowImage(const QSP_CHAR *file);
-    //static void OpenGame(const QSP_CHAR *file, QSP_BOOL isNewGame);
-    static void OpenGameStatus(const QSP_CHAR *file);
-    static void SaveGameStatus(const QSP_CHAR *file);
+    static void AddMenuItem(const QSPString& name, const QSPString& imgPath);
+    static int ShowMenu(const QSPListItem* items, int count);
+    static void Input(QSPString text, QSP_CHAR *buffer, int maxLen);
+    static void ShowImage(QSPString file);
+    //static void OpenGame(const QSPString& file, QSP_BOOL isNewGame);
+    static void OpenGameStatus(QSPString file);
+    static bool OpenGameStatusEx(const QSPString& file, bool isRefresh);
+    static void SaveGameStatus(QSPString file);
+    static bool SaveGameStatusEx(const QSPString& file, bool isRefresh);
 
     static QString m_gamePath;
 private:
     // Internal methods
-    static void UpdateGamePath();
-    static bool SetVolume(const QSP_CHAR *file, int volume);
+    static void UpdateGamePath(const QString& fileName);
+    static bool SetVolume(const QSPString& file, int volume);
     static void UpdateSounds();
 
     // Fields

@@ -18,6 +18,7 @@
 
 #include "callbacks_gui.h"
 #include "comtools.h"
+#include "qspstr.h"
 
 #include "optionsdialog.h"
 
@@ -171,13 +172,13 @@ void MainWindow::EnableControls(bool status, bool isExtended)
 void MainWindow::ApplyParams()
 {
     int numVal;
-    QSP_CHAR *strVal;
+    QSPString strVal;
     QColor setBackColor, setFontColor, setLinkColor;
     setPalette(m_palette);
     // --------------
     if(!m_isUseBackColor)
     {
-        if(QSPGetVarValues(QSP_FMT("BCOLOR"), 0, &numVal, &strVal))
+        if(QSPGetVarValues(L"BCOLOR"_qsp, 0, &numVal, &strVal))
         {
             if(numVal == 0)
                 setBackColor = m_defaultBackColor;
@@ -195,7 +196,7 @@ void MainWindow::ApplyParams()
     // --------------
     if(!m_isUseFontColor)
     {
-        if(QSPGetVarValues(QSP_FMT("FCOLOR"), 0, &numVal, &strVal))
+        if(QSPGetVarValues(L"FCOLOR"_qsp, 0, &numVal, &strVal))
         {
             if(numVal == 0)
                 setFontColor = m_defaultFontColor;
@@ -213,7 +214,7 @@ void MainWindow::ApplyParams()
     // --------------
     if(!m_isUseLinkColor)
     {
-        if(QSPGetVarValues(QSP_FMT("LCOLOR"), 0, &numVal, &strVal))
+        if(QSPGetVarValues(L"LCOLOR"_qsp, 0, &numVal, &strVal))
         {
             if(numVal == 0)
                 setLinkColor = m_defaultLinkColor;
@@ -234,9 +235,9 @@ void MainWindow::ApplyParams()
     int sizeType = 0;
     if(!m_isUseFont)
     {
-        if(QSPGetVarValues(QSP_FMT("FNAME"), 0, &numVal, &strVal))
+        if(QSPGetVarValues(L"FNAME"_qsp, 0, &numVal, &strVal))
         {
-            if(strVal != 0)
+            if(strVal.Str)
             {
                 if(!QSPTools::qspStrToQt(strVal).isEmpty())
                 {
@@ -247,7 +248,7 @@ void MainWindow::ApplyParams()
         }
         if(!m_isUseFontSize)
         {
-            if(QSPGetVarValues(QSP_FMT("FSIZE"), 0, &numVal, &strVal))
+            if(QSPGetVarValues(L"FSIZE"_qsp, 0, &numVal, &strVal))
             {
                 if(numVal != 0)
                 {
@@ -336,12 +337,12 @@ void MainWindow::ShowError()
 {
     bool oldIsProcessEvents;
     QString errorMessage;
-    QSP_CHAR *loc;
+    QSPString loc;
     int code, actIndex, line;
     if (m_isQuit) return;
     QSPGetLastErrorData(&code, &loc, &actIndex, &line);
     QString desc = QSPTools::qspStrToQt(QSPGetErrorDesc(code));
-    if (loc)
+    if (loc.Str)
         errorMessage = QString("Location: %1\nArea: %2\nLine: %3\nCode: %4\nDesc: %5")
                 .arg(QSPTools::qspStrToQt(loc))
                 .arg(actIndex < 0 ? QString("on visit") : QString("on action"))
@@ -469,6 +470,11 @@ void MainWindow::SetUseCaseInsensitiveFilePath(bool CaseInsensitiveFilePath)
 bool MainWindow::GetUseCaseInsensitiveFilePath()
 {
     return QSPTools::useCaseInsensitiveFilePath;
+}
+
+const QString & MainWindow::gameFilePath() const
+{
+    return m_gameFile;
 }
 
 void MainWindow::LoadSettings(QString filePath)
@@ -690,16 +696,16 @@ void MainWindow::CreateDockWindows()
 {
     // "Main desc" widget
 #ifndef _WEBBOX_COMMON
-    _mainDescTextBox = new QspTextBox(this);
-    connect(_mainDescTextBox, SIGNAL(anchorClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
+    _mainDescTextBox = new QspTextBox(this->centralWidget());
+    connect(_mainDescTextBox, &QspTextBox::anchorClicked, this, &MainWindow::OnLinkClicked);
 #endif
 #ifdef _WEBBOX
-    _mainDescTextBox = new QspWebBox(this);
-    connect(_mainDescTextBox, SIGNAL(qspLinkClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
+    _mainDescTextBox = new QspWebBox(this->centralWidget());
+    connect(_mainDescTextBox, &QspWebBox::qspLinkClicked, this, &MainWindow::OnLinkClicked);
 #endif
 #ifdef _WEBBOX_WEBKIT
-    _mainDescTextBox = new QspWebBox(this);
-    connect(_mainDescTextBox, SIGNAL(linkClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
+    _mainDescTextBox = new QspWebBox(this->centralWidget());
+    connect(_mainDescTextBox, &QspWebBox::linkClicked, this, &MainWindow::OnLinkClicked);
     _mainDescTextBox->load(QUrl("qsp:/"));
     {
         QEventLoop loop;
@@ -708,28 +714,28 @@ void MainWindow::CreateDockWindows()
     }
 #endif
     _mainDescTextBox->setObjectName(QStringLiteral("_mainDescTextBox"));
-    _mainDescWidget = new QDockWidget(tr("Main desc"), this);
+    _mainDescWidget = new QDockWidget(tr("Main desc"), this->centralWidget());
     _mainDescWidget->setObjectName(QStringLiteral("_mainDescWidget"));
     addDockWidget(Qt::TopDockWidgetArea, _mainDescWidget, Qt::Vertical);
     _mainDescWidget->setWidget(_mainDescTextBox);
 
     // "Objects" widget
-    _objectsWidget = new QDockWidget(tr("Objects"), this);
+    _objectsWidget = new QDockWidget(tr("Objects"), this->centralWidget());
     _objectsWidget->setObjectName(QStringLiteral("_objectsWidget"));
     addDockWidget(Qt::RightDockWidgetArea, _objectsWidget, Qt::Vertical);
-    _objectsListBox = new QspListBox(this);
+    _objectsListBox = new QspListBox(this->centralWidget());
     _objectsListBox->setObjectName(QStringLiteral("_objectsListBox"));
-    connect(_objectsListBox, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(OnObjectListBoxItemClicked(QListWidgetItem *)));
-    //connect(_objectsListBox, SIGNAL(itemPressed(QListWidgetItem *)), this, SLOT(OnObjectListBoxItemClicked(QListWidgetItem *)));
-    connect(_objectsListBox, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(OnObjectListBoxItemClicked(QListWidgetItem *)));
-    //connect(_objectsListBox, SIGNAL(currentRowChanged(int)), this, SLOT(OnObjectChange(int)));
+    connect(_objectsListBox, &QspListBox::itemClicked, this, &MainWindow::OnObjectListBoxItemClicked);
+    //connect(_objectsListBox, &QspListBox::itemPressed, this, &MainWindow::OnObjectListBoxItemClicked);
+    connect(_objectsListBox, &QspListBox::itemDoubleClicked, this, &MainWindow::OnObjectListBoxItemClicked);
+    //connect(_objectsListBox, &QspListBox::currentRowChanged, this, &MainWindow::OnObjectChange);
     _objectsWidget->setWidget(_objectsListBox);
 
     // "Actions" widget
-    _actionsWidget = new QDockWidget(tr("Actions"), this);
+    _actionsWidget = new QDockWidget(tr("Actions"), this->centralWidget());
     _actionsWidget->setObjectName(QStringLiteral("_actionsWidget"));
     addDockWidget(Qt::BottomDockWidgetArea, _actionsWidget, Qt::Vertical);
-    _actionsListBox = new QspListBox(this);
+    _actionsListBox = new QspListBox(this->centralWidget());
     _actionsListBox->setObjectName(QStringLiteral("_actionsListBox"));
     connect(_actionsListBox, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(OnActionsListBoxItemClicked(QListWidgetItem *)));
     //connect(_actionsListBox, SIGNAL(itemPressed(QListWidgetItem *)), this, SLOT(OnActionsListBoxItemClicked(QListWidgetItem *)));
@@ -739,19 +745,19 @@ void MainWindow::CreateDockWindows()
     _actionsWidget->setWidget(_actionsListBox);
 
     // "Additional desc" widget
-    _descWidget = new QDockWidget(tr("Additional desc"), this);
+    _descWidget = new QDockWidget(tr("Additional desc"), this->centralWidget());
     _descWidget->setObjectName(QStringLiteral("_descWidget"));
     addDockWidget(Qt::BottomDockWidgetArea, _descWidget, Qt::Horizontal);
 #ifndef _WEBBOX_COMMON
-    _descTextBox = new QspTextBox(this);
+    _descTextBox = new QspTextBox(this->centralWidget());
     connect(_descTextBox, SIGNAL(anchorClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
 #endif
 #ifdef _WEBBOX
-    _descTextBox = new QspWebBox(this);
+    _descTextBox = new QspWebBox(this->centralWidget());
     connect(_descTextBox, SIGNAL(qspLinkClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
 #endif
 #ifdef _WEBBOX_WEBKIT
-    _descTextBox = new QspWebBox(this);
+    _descTextBox = new QspWebBox(this->centralWidget());
     connect(_descTextBox, SIGNAL(linkClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
     _descTextBox->load(QUrl("qsp:/"));
     {
@@ -764,18 +770,18 @@ void MainWindow::CreateDockWindows()
     _descWidget->setWidget(_descTextBox);
 
     // "Input area" widget
-    _inputWidget = new QDockWidget(tr("Input area"), this);
+    _inputWidget = new QDockWidget(tr("Input area"), this->centralWidget());
     _inputWidget->setObjectName(QStringLiteral("_inputWidget"));
     addDockWidget(Qt::BottomDockWidgetArea, _inputWidget, Qt::Vertical);
-    _inputTextBox = new QspInputBox(this);
+    _inputTextBox = new QspInputBox(this->centralWidget());
     _inputTextBox->setObjectName(QStringLiteral("_inputTextBox"));
     _inputWidget->setWidget(_inputTextBox);
     connect(_inputTextBox, SIGNAL(textChanged()), this, SLOT(OnInputTextChange()));
     connect(_inputTextBox, SIGNAL(InputTextEnter()), this, SLOT(OnInputTextEnter()));
 
-    m_imgView = new QspImgCanvas(this);
+    m_imgView = new QspImgCanvas(this->centralWidget());
     m_imgView->setObjectName(QStringLiteral("m_imgView"));
-    _imgViewWidget = new QDockWidget(tr("Image"), this);
+    _imgViewWidget = new QDockWidget(tr("Image"), this->centralWidget());
     _imgViewWidget->setObjectName(QStringLiteral("_imgViewWidget"));
     _imgViewWidget->setWidget(m_imgView);
     addDockWidget(Qt::BottomDockWidgetArea, _imgViewWidget, Qt::Vertical);
@@ -909,11 +915,11 @@ void MainWindow::OpenGameFile(const QString &path)
         _objectsListBox->SetGamePath(QSPCallBacks::m_gamePath);
         _actionsListBox->SetGamePath(QSPCallBacks::m_gamePath);
         _descTextBox->SetGamePath(QSPCallBacks::m_gamePath);
-        if (QSPLoadGameWorld(qspStringFromQString(path)))
-        {
+        if (QSPTools::loadGameFile((path))) {
             m_isGameOpened = true;
             lastGame = path;
             QFileInfo file(path);
+            m_gameFile = file.canonicalFilePath();
             QString filePath(file.canonicalPath());
             if(!filePath.endsWith("/")) filePath+="/";
             QString configString(filePath + QSP_CONFIG);
@@ -1001,7 +1007,7 @@ void MainWindow::dropEvent(QDropEvent *event)
             {
                 if(m_isGameOpened)
                 {
-                    if (!QSPOpenSavedGame(qspStringFromQString(event->mimeData()->urls().at(0).toLocalFile()), QSP_TRUE))
+                    if (!QSPCallBacks::OpenGameStatusEx(QSPStr(event->mimeData()->urls().at(0).toLocalFile()), true))
                         ShowError();
                     else
                         ApplyParams();
@@ -1072,7 +1078,7 @@ void MainWindow::OnOpenSavedGame()
     if (!path.isEmpty())
     {
         SetLastPath(QFileInfo(path).canonicalPath());
-        if (!QSPOpenSavedGame(qspStringFromQString(path), QSP_TRUE))
+        if (!QSPCallBacks::OpenGameStatusEx(QSPStr(path), true))
             ShowError();
         else
             ApplyParams();
@@ -1093,7 +1099,7 @@ void MainWindow::OnSaveGame()
         if(!path.endsWith(".sav"))
             path.append(".sav");
         QString p = GetLastPath();
-        if (QSPSaveGame(qspStringFromQString(path), QSP_TRUE))
+        if (QSPCallBacks::SaveGameStatusEx(QSPStr(path), true))
         {
             SetLastPath(QFileInfo(path).canonicalPath());
             m_savedGamePath = path;
@@ -1111,7 +1117,7 @@ void MainWindow::OnOpenQuickSavedGame()
     QFileInfo fileInfo(path);
     if(fileInfo.exists() && fileInfo.isFile())
     {
-        if (!QSPOpenSavedGame(qspStringFromQString(path), QSP_TRUE))
+        if (!QSPCallBacks::OpenGameStatusEx(QSPStr(path), true))
             ShowError();
         else
             ApplyParams();
@@ -1123,7 +1129,7 @@ void MainWindow::OnQuickSaveGame()
     if(!m_isGameOpened)
         return;
     QString path = m_path + QSP_QUICKSAVE;
-    if (QSPSaveGame(qspStringFromQString(path), QSP_TRUE))
+    if (QSPCallBacks::SaveGameStatusEx(QSPStr(path), true))
         m_savedGamePath = path;
     else
         ShowError();
@@ -1268,7 +1274,7 @@ void MainWindow::OnLinkClicked(const QUrl &url)
     else if (href.startsWith("EXEC:", Qt::CaseInsensitive))
     {
         QString string = href.mid(5);
-        if (m_isProcessEvents && !QSPExecString(qspStringFromQString(string), QSP_TRUE))
+        if (m_isProcessEvents && !QSPExecString(QSPStr(string), QSP_TRUE))
             ShowError();
     }
     else
@@ -1318,14 +1324,14 @@ void MainWindow::OnMenu(QAction* action)
 
 void MainWindow::OnInputTextChange()
 {
-    QSPSetInputStrText(qspStringFromQString(_inputTextBox->GetText()));
+    QSPSetInputStrText(QSPStr(_inputTextBox->GetText()));
 }
 
 void MainWindow::OnInputTextEnter()
 {
     if(!m_isProcessEvents)
         return;
-    QSPSetInputStrText(qspStringFromQString(_inputTextBox->GetText()));
+    QSPSetInputStrText(QSPStr(_inputTextBox->GetText()));
     if (!QSPExecUserInput(QSP_TRUE))
         ShowError();
 }

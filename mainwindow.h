@@ -131,6 +131,7 @@ public:
     bool GetAllowHTML5Extras() { return m_isAllowHTML5Extras; }
     void SetUseCaseInsensitiveFilePath(bool CaseInsensitiveFilePath);
     bool GetUseCaseInsensitiveFilePath();
+    const QString& gameFilePath() const;
 
 private:
     void CreateMenuBar();
@@ -179,6 +180,7 @@ private:
     QString m_configPath;
     bool perGameConfig;
     QString m_path;
+    QString m_gameFile;
     QTimer *m_timer;
     QspImgCanvas *m_imgView;
     QDockWidget*    _imgViewWidget;

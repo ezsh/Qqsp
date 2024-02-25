@@ -8,6 +8,7 @@
 #include <qsp_default.h>
 #include "callbacks_gui.h"
 #include "comtools.h"
+#include "qspstr.h"
 
 QspExecWebEngineUrlSchemeHandler::QspExecWebEngineUrlSchemeHandler(QObject *parent) : QWebEngineUrlSchemeHandler(parent)
 {
@@ -31,14 +32,14 @@ void QspExecWebEngineUrlSchemeHandler::legacyLinkClicked(QWebEngineUrlRequestJob
     QString href;
     href = QByteArray::fromPercentEncoding(url.toString().toUtf8());
     QString string = href.mid(5);
-    if (!QSPExecString(qspStringFromQString(string), QSP_TRUE))
+    if (!QSPExecString(QSPStr(string), QSP_TRUE))
     {
         QString errorMessage;
-        QSP_CHAR *loc;
+        QSPString loc;
         int code, actIndex, line;
         QSPGetLastErrorData(&code, &loc, &actIndex, &line);
         QString desc = QSPTools::qspStrToQt(QSPGetErrorDesc(code));
-        if (loc)
+        if (loc.Str)
             errorMessage = QString("Location: %1\nArea: %2\nLine: %3\nCode: %4\nDesc: %5")
                     .arg(QSPTools::qspStrToQt(loc))
                     .arg(actIndex < 0 ? QString("on visit") : QString("on action"))

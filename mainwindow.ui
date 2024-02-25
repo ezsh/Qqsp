@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1069</width>
+    <height>676</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,8 +23,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>29</height>
+     <width>1069</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="_fileMenu">
@@ -98,6 +98,33 @@
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
   </widget>
+  <widget class="QDockWidget" name="objectsWidget">
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Objects</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_10"/>
+  </widget>
+  <widget class="QDockWidget" name="actionsWidget">
+   <property name="windowTitle">
+    <string>Actions</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_11"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_9">
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_9"/>
+  </widget>
   <action name="actionOpen_game">
    <property name="icon">
     <iconset theme="document-import" resource="qqsp.qrc">
@@ -157,7 +184,8 @@
   </action>
   <action name="actionQuick_load">
    <property name="icon">
-    <iconset theme="document-open-recent"/>
+    <iconset theme="document-open-recent">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Quick Load</string>
@@ -168,7 +196,8 @@
   </action>
   <action name="actionQuick_save">
    <property name="icon">
-    <iconset theme="document-save"/>
+    <iconset theme="document-save">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Quick Save</string>
@@ -190,7 +219,8 @@
   </action>
   <action name="actionOptions">
    <property name="icon">
-    <iconset theme="configure"/>
+    <iconset theme="configure">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Options...</string>
@@ -239,7 +269,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="configure-shortcuts"/>
+    <iconset theme="configure-shortcuts">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Hotkeys for actions</string>
@@ -248,6 +279,19 @@
     <string>Ctrl+8</string>
    </property>
   </action>
+  <zorder>dockWidget_5</zorder>
+  <zorder>dockWidget</zorder>
+  <zorder>dockWidget_2</zorder>
+  <zorder>dockWidget_3</zorder>
+  <zorder>dockWidget_4</zorder>
+  <zorder>dockWidget_6</zorder>
+  <zorder>dockWidget_7</zorder>
+  <zorder>dockWidget_8</zorder>
+  <zorder>mainDescWidget</zorder>
+  <zorder>dockWidget_9</zorder>
+  <zorder>objectsWidget</zorder>
+  <zorder>actionsWidget</zorder>
+  <zorder>dockWidget_9</zorder>
  </widget>
  <resources>
   <include location="qqsp.qrc"/>

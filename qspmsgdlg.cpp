@@ -8,6 +8,7 @@
 
 #include "callbacks_gui.h"
 #include "comtools.h"
+#include "qspstr.h"
 
 QspMsgDlg::QspMsgDlg(QWidget *parent) : QDialog(parent)
 {
@@ -94,7 +95,7 @@ void QspMsgDlg::OnLinkClicked(const QUrl &url)
     else if (href.startsWith("EXEC:", Qt::CaseInsensitive)) //NOTE: was not part of original player
     {
         QString string = href.mid(5);
-        if (!QSPExecString(qspStringFromQString(string), QSP_TRUE))
+        if (!QSPExecString(QSPStr(string), QSP_TRUE))
             if(this->parent() != 0)
                 if(this->parent()->objectName() == QStringLiteral("MainWindow"))
                     qobject_cast<MainWindow*>(this->parent())->ShowError(); //TODO: replace with signal
