@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.30 FATAL_ERROR)
 
 project(qqsp VERSION 1.9.0)
 include(FeatureSummary)
+include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -79,6 +80,12 @@ if (Qt6LinguistTools_FOUND)
 		    Qqsp.en.ts Qqsp.ru.ts Qqsp.uk.ts
 			qt_uk.ts qtbase_uk.ts
 	)
+endif()
+
+install(TARGETS qqsp DESTINATION "${CMAKE_INSTALL_BINDIR}")
+if (LINUX)
+	install(FILES Qqsp.desktop DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications")
+	install(FILES qsp.mime DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages" RENAME qsp.xml)
 endif()
 
 feature_summary(FATAL_ON_MISSING_REQUIRED_PACKAGES WHAT ALL)
