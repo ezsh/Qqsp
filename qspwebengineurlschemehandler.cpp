@@ -18,7 +18,7 @@ void QspWebEngineUrlSchemeHandler::requestStarted(QWebEngineUrlRequestJob *reque
     const QUrl url = request->requestUrl();
     QString url_str = url.toString();
     QBuffer *buffer = new QBuffer;
-    connect(request, SIGNAL(destroyed()), buffer, SLOT(deleteLater()));
+    connect(request, &QWebEngineUrlRequestJob::destroyed, buffer, &QBuffer::deleteLater);
 
     buffer->open(QIODevice::WriteOnly);
     if(url_str.compare("qsp:" , Qt::CaseInsensitive) == 0 || url_str.compare("qsp:/" , Qt::CaseInsensitive) == 0)

@@ -1,13 +1,13 @@
 #ifndef QSPMSGDLG_H
 #define QSPMSGDLG_H
 
-#include <QWidget>
-#include <QDialog>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QString>
-#include <QFont>
 #include <QColor>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QFont>
+#include <QString>
+#include <QVBoxLayout>
+#include <QWidget>
 
 #include "qsptextbox.h"
 
@@ -39,7 +39,7 @@ private:
     // Fields
     QspTextBox m_desc;
     QVBoxLayout layout;
-    QPushButton okButton;
+    QDialogButtonBox dialogButtons;
 };
 
 #endif // QSPMSGDLG_H

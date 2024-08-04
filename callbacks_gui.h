@@ -1,13 +1,25 @@
 #ifndef CALLBACKS_GUI_H
 #define CALLBACKS_GUI_H
 
+#include "mainwindow.h"
+#include <QAudioOutput>
+#include <QMediaPlayer>
 #include <QString>
 #include <qsp_default.h>
-#include <QMap>
-#include <QMediaPlayer>
-#include "mainwindow.h"
 
-typedef QMap<QString, QMediaPlayer*> QSPSounds;
+#include <map>
+
+struct QSPSound
+{
+    QSPSound();
+    QSPSound(QSPSound &&other);
+    ~QSPSound();
+
+    QMediaPlayer *player;
+    QAudioOutput *output;
+};
+
+typedef std::map<QString, QSPSound> QSPSounds;
 
 //static QSPString qspStringFromPair(const QSP_CHAR *start, const QSP_CHAR *end)
 //{
@@ -59,7 +71,7 @@ public:
     static int ShowMenu(const QSPListItem* items, int count);
     static void Input(QSPString text, QSP_CHAR *buffer, int maxLen);
     static void ShowImage(QSPString file);
-    //static void OpenGame(const QSPString& file, QSP_BOOL isNewGame);
+    static void OpenGame(QSPString file, QSP_BOOL isNewGame);
     static void OpenGameStatus(QSPString file);
     static bool OpenGameStatusEx(const QSPString& file, bool isRefresh);
     static void SaveGameStatus(QSPString file);

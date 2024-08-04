@@ -15,8 +15,14 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     ui(new Ui::OptionsDialog)
 {
     ui->setupUi(this);
-    if(this->parent() == 0)
+
+    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+    if (!this->parent())
+    {
         return;
+    }
     MainWindow *mw = qobject_cast<MainWindow*>(this->parent());
     ui->checkBox_fontSize->setChecked(mw->GetUseFontSize());
     ui->spinBox_fontSize->setValue(mw->GetFontSize());
@@ -44,7 +50,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     ui->checkBox_CaseInsensitiveFilePath->setVisible(false);
 #endif
 
-    QDirIterator qmIt(QCoreApplication::applicationDirPath(), QStringList() << "*.qm", QDir::Files);
+    QDirIterator qmIt(QCoreApplication::applicationDirPath(), QStringList() << QLatin1String("%1*.qm").arg(QCoreApplication::applicationName()), QDir::Files);
     while(qmIt.hasNext())
     {
         qmIt.next();
@@ -53,14 +59,21 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
         if(translator.load(finfo.completeBaseName(), finfo.absolutePath()))
             ui->comboBox_language->addItem(translator.translate("__LANG__", "__LANGNAME__"), QVariant(translator.translate("__LANG__", "__LANGID__")));
     }
-    QDirIterator qmItRC(":/translations/", QStringList() << "*.qm", QDir::Files);
+    QDirIterator qmItRC(":/i18n/", QStringList() << QLatin1String("%1*.qm").arg(QCoreApplication::applicationName()), QDir::Files);
     while(qmItRC.hasNext())
     {
         qmItRC.next();
         QFileInfo finfo = qmItRC.fileInfo();
         QTranslator translator;
-        if(translator.load(finfo.completeBaseName(), finfo.absolutePath()))
-            ui->comboBox_language->addItem(translator.translate("__LANG__", "__LANGNAME__"), QVariant(translator.translate("__LANG__", "__LANGID__")));
+        if (translator.load(finfo.completeBaseName(), finfo.absolutePath()))
+        {
+            QString fileLangId = translator.translate("__LANG__", "__LANGID__");
+            int index = ui->comboBox_language->findData(fileLangId);
+            if (index == -1)
+            {
+                ui->comboBox_language->addItem(translator.translate("__LANG__", "__LANGNAME__"), QVariant(translator.translate("__LANG__", "__LANGID__")));
+            }
+        }
     }
     langid = mw->GetLangID();
     int index = ui->comboBox_language->findData(langid);
@@ -71,6 +84,37 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
 OptionsDialog::~OptionsDialog()
 {
     delete ui;
+}
+
+void OptionsDialog::accept()
+{
+    if (this->parent() == 0)
+    {
+        close();
+        return;
+    }
+    MainWindow* mw = qobject_cast<MainWindow*>(this->parent());
+
+    mw->SetUseFontSize(ui->checkBox_fontSize->isChecked());
+    if (ui->checkBox_fontSize->isChecked()) mw->SetFontSize(ui->spinBox_fontSize->value());
+    mw->SetUseFont(ui->checkBox_font->isChecked());
+    if (ui->checkBox_font->isChecked()) mw->SetFont(m_font);
+    mw->SetUseBackColor(ui->checkBox_backColor->isChecked());
+    mw->SetUseLinkColor(ui->checkBox_linkColor->isChecked());
+    mw->SetUseFontColor(ui->checkBox_fontColor->isChecked());
+    if (ui->checkBox_backColor->isChecked()) mw->SetBackgroundColor(m_backColor);
+    if (ui->checkBox_linkColor->isChecked()) mw->SetLinkColor(m_linkColor);
+    if (ui->checkBox_fontColor->isChecked()) mw->SetForegroundColor(m_fontColor);
+    mw->SetDisableVideo(ui->checkBox_disableVideo->isChecked());
+    mw->SetPerGameConfig(ui->checkBox_perGameConfig->isChecked());
+    mw->SetAutostart(ui->checkBox_autostart->isChecked());
+    mw->SetVideoFix(ui->checkBox_videoFix->isChecked());
+    mw->SetAllowHTML5Extras(ui->checkBox_HTML5Extras->isChecked());
+    mw->SetUseCaseInsensitiveFilePath(ui->checkBox_CaseInsensitiveFilePath->isChecked());
+    if (ui->comboBox_language->count() > 0) mw->SetLangID(ui->comboBox_language->itemData(ui->comboBox_language->currentIndex()).toString());
+    if (mw->GetOverallVolume() != ui->horizontalSlider_volume->value() / 100.0f) mw->SetOverallVolume(ui->horizontalSlider_volume->value() / 100.0f);
+
+    close();
 }
 
 void OptionsDialog::on_pushButton_font_clicked()
@@ -113,47 +157,4 @@ void OptionsDialog::on_pushButton_linkColor_clicked()
         m_linkColor = new_color;
         ui->label_linkColor->setStyleSheet(QString("background-color: rgb(%1, %2, %3);").arg(QString::number(m_linkColor.red()),QString::number(m_linkColor.green()), QString::number(m_linkColor.blue())));
     }
-}
-
-void OptionsDialog::on_pushButton_cancel_clicked()
-{
-    close();
-}
-
-void OptionsDialog::on_pushButton_ok_clicked()
-{
-    if(this->parent() == 0)
-    {
-        close();
-        return;
-    }
-    MainWindow *mw = qobject_cast<MainWindow*>(this->parent());
-
-    mw->SetUseFontSize(ui->checkBox_fontSize->isChecked());
-    if(ui->checkBox_fontSize->isChecked())
-        mw->SetFontSize(ui->spinBox_fontSize->value());
-    mw->SetUseFont(ui->checkBox_font->isChecked());
-    if(ui->checkBox_font->isChecked())
-        mw->SetFont(m_font);
-    mw->SetUseBackColor(ui->checkBox_backColor->isChecked());
-    mw->SetUseLinkColor(ui->checkBox_linkColor->isChecked());
-    mw->SetUseFontColor(ui->checkBox_fontColor->isChecked());
-    if(ui->checkBox_backColor->isChecked())
-        mw->SetBackgroundColor(m_backColor);
-    if(ui->checkBox_linkColor->isChecked())
-        mw->SetLinkColor(m_linkColor);
-    if(ui->checkBox_fontColor->isChecked())
-        mw->SetForegroundColor(m_fontColor);
-    mw->SetDisableVideo(ui->checkBox_disableVideo->isChecked());
-    mw->SetPerGameConfig(ui->checkBox_perGameConfig->isChecked());
-    mw->SetAutostart(ui->checkBox_autostart->isChecked());
-    mw->SetVideoFix(ui->checkBox_videoFix->isChecked());
-    mw->SetAllowHTML5Extras(ui->checkBox_HTML5Extras->isChecked());
-    mw->SetUseCaseInsensitiveFilePath(ui->checkBox_CaseInsensitiveFilePath->isChecked());
-    if(ui->comboBox_language->count() > 0)
-        mw->SetLangID(ui->comboBox_language->itemData(ui->comboBox_language->currentIndex()).toString());
-    if(mw->GetOverallVolume() != ui->horizontalSlider_volume->value() / 100.0f)
-        mw->SetOverallVolume(ui->horizontalSlider_volume->value() / 100.0f);
-
-    close();
 }

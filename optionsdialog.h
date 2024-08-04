@@ -18,18 +18,14 @@ public:
     explicit OptionsDialog(QWidget *parent = 0);
     ~OptionsDialog();
 
+    // QDialog interface
+    void accept() override;
+
 private slots:
     void on_pushButton_font_clicked();
-
     void on_pushButton_backColor_clicked();
-
     void on_pushButton_fontColor_clicked();
-
     void on_pushButton_linkColor_clicked();
-
-    void on_pushButton_cancel_clicked();
-
-    void on_pushButton_ok_clicked();
 
 private:
     Ui::OptionsDialog *ui;

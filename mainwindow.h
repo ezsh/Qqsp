@@ -19,18 +19,14 @@
 #include <QDragEnterEvent>
 #include <QTranslator>
 
-#include "qsptextbox.h"
 #include "qsplistbox.h"
 #include "qspinputbox.h"
 #include "qspimgcanvas.h"
 #ifdef _WEBBOX
 #include <QWebEngineProfile>
 #include "qspwebbox.h"
-#include "qspwebengineurlrequestinterceptor.h"
-#include "qspwebengineurlschemehandler.h"
-#endif
-#ifdef _WEBBOX_WEBKIT
-#include "qspwebbox_webkit.h"
+#else
+#include "qsptextbox.h"
 #endif
 
 #include <qsp_default.h>

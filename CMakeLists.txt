@@ -1,16 +1,19 @@
-cmake_minimum_required(VERSION 3.24 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.30 FATAL_ERROR)
 
 project(qqsp VERSION 1.9.0)
 include(FeatureSummary)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_SCAN_FOR_MODULES off)
 
-find_package(Qt5 5.15 REQUIRED COMPONENTS Core Gui Multimedia Widgets)
+find_package(Qt6 6.7 COMPONENTS LinguistTools WebEngineCore WebEngineWidgets)
+find_package(Qt6 6.7 REQUIRED COMPONENTS Core Gui Multimedia MultimediaWidgets Widgets)
 find_package(Qsp REQUIRED)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR True)
 
@@ -28,7 +31,7 @@ target_sources(qqsp PRIVATE
 	callbacks_gui.cpp
 	comtools.cpp
 	optionsdialog.cpp
-	videoframeprocessor.cpp
+	# videoframeprocessor.cpp
 	videolabel.cpp
 	mainwindow.h
 	qsptextbox.h
@@ -41,17 +44,16 @@ target_sources(qqsp PRIVATE
 	callbacks_gui.h
 	comtools.h
 	optionsdialog.h
-	videoframeprocessor.h
+	# videoframeprocessor.h
 	videolabel.h
 	mainwindow.ui
 	optionsdialog.ui
 	qqsp.qrc
 )
 
-target_link_libraries(qqsp PRIVATE Qsp::qsp Qt5::Multimedia Qt5::Widgets)
+target_link_libraries(qqsp PRIVATE Qsp::qsp Qt::Multimedia Qt::MultimediaWidgets Qt::Widgets)
 
-find_package(Qt5 5.15 COMPONENTS WebEngine WebEngineWidgets)
-if(Qt5_FOUND)
+if(Qt6WebEngineWidgets_FOUND)
 	target_sources(qqsp PRIVATE
 		qspwebbox.cpp
 		qspwebengineurlrequestinterceptor.cpp
@@ -68,9 +70,15 @@ if(Qt5_FOUND)
 	)
 
 	target_compile_definitions(qqsp PRIVATE _WEBBOX _WEBBOX_COMMON)
-	target_link_libraries(qqsp PRIVATE Qt5::WebEngine Qt5::WebEngineWidgets)
+	target_link_libraries(qqsp PRIVATE Qt::WebEngineCore Qt::WebEngineWidgets)
 endif()
 
-
+if (Qt6LinguistTools_FOUND)
+	qt_add_translations(qqsp
+		TS_FILES
+		    Qqsp.en.ts Qqsp.ru.ts Qqsp.uk.ts
+			qt_uk.ts qtbase_uk.ts
+	)
+endif()
 
 feature_summary(FATAL_ON_MISSING_REQUIRED_PACKAGES WHAT ALL)

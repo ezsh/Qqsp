@@ -1,26 +1,26 @@
 #include "mainwindow.h"
 
-#include <QSettings>
-#include <QApplication>
-#include <QFileInfo>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QThread>
-#include <QCursor>
-#include <QPalette>
-#include <QFontDialog>
-#include <QIcon>
-#include <QDesktopServices>
-#include <QLocale>
-#include <QInputDialog>
-#include <QMimeData>
-#include <QDesktopWidget>
-
 #include "callbacks_gui.h"
 #include "comtools.h"
+#include "optionsdialog.h"
 #include "qspstr.h"
 
-#include "optionsdialog.h"
+#include <QApplication>
+#include <QAudioOutput>
+#include <QCursor>
+#include <QDesktopServices>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QFontDialog>
+#include <QIcon>
+#include <QInputDialog>
+#include <QLocale>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QPalette>
+#include <QScreen>
+#include <QSettings>
+#include <QThread>
 
 #ifdef _ANDROIDQT
 #include <QStandardPaths>
@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_timer = new QTimer(this);
     m_timer->setObjectName(QStringLiteral("m_timer"));
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(OnTimer()));
+    connect(m_timer, &QTimer::timeout, this, &MainWindow::OnTimer);
     m_savedGamePath.clear();
     m_isQuit = false;
     m_keyPressedWhileDisabled = false;
@@ -132,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_menu = new QMenu(this);
     m_menu->setObjectName(QStringLiteral("m_menu"));
-    connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(OnMenu(QAction*)) );
+    connect(m_menu, &QMenu::triggered, this, &MainWindow::OnMenu);
 
     QSPInit();
     QSPCallBacks::Init(this);
@@ -479,18 +479,22 @@ const QString & MainWindow::gameFilePath() const
 
 void MainWindow::LoadSettings(QString filePath)
 {
-    QSettings *settings;
-    if(filePath.isEmpty())
-        settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName(), this);
-    else
-        settings = new QSettings(filePath, QSettings::IniFormat);
+	QSettings* settings;
+	if (filePath.isEmpty()) {
+		settings = new QSettings(
+			QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(),
+			QApplication::applicationName(), this);
+	} else {
+		settings = new QSettings(filePath, QSettings::IniFormat);
+	}
 
-    restoreGeometry(settings->value("mainWindow/geometry").toByteArray());
-    if ( isMaximized() )
-        setGeometry( QApplication::desktop()->availableGeometry( this ) );
-    restoreState(settings->value("mainWindow/windowState").toByteArray());
+	restoreGeometry(settings->value("mainWindow/geometry").toByteArray());
+	if (isMaximized()) {
+		setGeometry(QApplication::screenAt(geometry().center())->availableGeometry());
+	}
+	restoreState(settings->value("mainWindow/windowState").toByteArray());
 
-    if (settings->value("mainWindow/isMaximized", isMaximized()).toBool())
+	if (settings->value("mainWindow/isMaximized", isMaximized()).toBool())
         showMaximized();
     if (settings->value("mainWindow/isFullScreen", isFullScreen()).toBool())
         showFullScreen();
@@ -621,32 +625,32 @@ void MainWindow::CreateMenuBar()
     QAction* before = _ui->_showHideMenu->insertSeparator(_ui->actionCaptions);
 
     action = _objectsWidget->toggleViewAction();
-    action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
+    action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
     _ui->_showHideMenu->insertAction(before, action);
 
     // Actions item
     action = _actionsWidget->toggleViewAction();
-    action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
+    action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_2));
     _ui->_showHideMenu->insertAction(before, action);
 
     // Additional desc item
     action = _descWidget->toggleViewAction();
-    action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
+    action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_3));
     _ui->_showHideMenu->insertAction(before, action);
 
     // Input area item
     action = _inputWidget->toggleViewAction();
-    action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
+    action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_4));
     _ui->_showHideMenu->insertAction(before, action);
 
     // Main desc item
     action = _mainDescWidget->toggleViewAction();
-    action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_5));
+    action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_5));
     _ui->_showHideMenu->insertAction(before, action);
 
     // Image item
     action = _imgViewWidget->toggleViewAction();
-    action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_6));
+    action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_6));
     _ui->_showHideMenu->insertAction(before, action);
 
     // Captions item
@@ -655,7 +659,7 @@ void MainWindow::CreateMenuBar()
 
     // ToolBar
     action = _ui->mainToolBar->toggleViewAction();
-    action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_7));
+    action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_7));
     _ui->_showHideMenu->addAction(action);
 
     //TODO: MenuBar
@@ -703,16 +707,6 @@ void MainWindow::CreateDockWindows()
     _mainDescTextBox = new QspWebBox(this->centralWidget());
     connect(_mainDescTextBox, &QspWebBox::qspLinkClicked, this, &MainWindow::OnLinkClicked);
 #endif
-#ifdef _WEBBOX_WEBKIT
-    _mainDescTextBox = new QspWebBox(this->centralWidget());
-    connect(_mainDescTextBox, &QspWebBox::linkClicked, this, &MainWindow::OnLinkClicked);
-    _mainDescTextBox->load(QUrl("qsp:/"));
-    {
-        QEventLoop loop;
-        connect(_mainDescTextBox,SIGNAL(loadFinished(bool)),&loop,SLOT(quit()));
-        loop.exec();
-    }
-#endif
     _mainDescTextBox->setObjectName(QStringLiteral("_mainDescTextBox"));
     _mainDescWidget = new QDockWidget(tr("Main desc"), this->centralWidget());
     _mainDescWidget->setObjectName(QStringLiteral("_mainDescWidget"));
@@ -737,10 +731,10 @@ void MainWindow::CreateDockWindows()
     addDockWidget(Qt::BottomDockWidgetArea, _actionsWidget, Qt::Vertical);
     _actionsListBox = new QspListBox(this->centralWidget());
     _actionsListBox->setObjectName(QStringLiteral("_actionsListBox"));
-    connect(_actionsListBox, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(OnActionsListBoxItemClicked(QListWidgetItem *)));
-    //connect(_actionsListBox, SIGNAL(itemPressed(QListWidgetItem *)), this, SLOT(OnActionsListBoxItemClicked(QListWidgetItem *)));
-    connect(_actionsListBox, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(OnActionsListBoxItemClicked(QListWidgetItem *)));
-    connect(_actionsListBox, SIGNAL(SelectionChange(int)), this, SLOT(OnActionChange(int)));
+    connect(_actionsListBox, &QspListBox::itemClicked, this, &MainWindow::OnActionsListBoxItemClicked);
+    // connect(_actionsListBox, &QspListBox::itemPressed, this, &MainWindow::OnActionsListBoxItemClicked);
+    connect(_actionsListBox, &QspListBox::itemDoubleClicked, this, &MainWindow::OnActionsListBoxItemClicked);
+    connect(_actionsListBox, &QspListBox::SelectionChange, this, &MainWindow::OnActionChange);
     _actionsListBox->SetMouseTracking(true);
     _actionsWidget->setWidget(_actionsListBox);
 
@@ -754,35 +748,25 @@ void MainWindow::CreateDockWindows()
 #endif
 #ifdef _WEBBOX
     _descTextBox = new QspWebBox(this->centralWidget());
-    connect(_descTextBox, SIGNAL(qspLinkClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
-#endif
-#ifdef _WEBBOX_WEBKIT
-    _descTextBox = new QspWebBox(this->centralWidget());
-    connect(_descTextBox, SIGNAL(linkClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
-    _descTextBox->load(QUrl("qsp:/"));
-    {
-        QEventLoop loop;
-        connect(_descTextBox,SIGNAL(loadFinished(bool)),&loop,SLOT(quit()));
-        loop.exec();
-    }
+    connect(_descTextBox, &QspWebBox::qspLinkClicked, this, &MainWindow::OnLinkClicked);
 #endif
     _descTextBox->setObjectName(QStringLiteral("_descTextBox"));
     _descWidget->setWidget(_descTextBox);
 
     // "Input area" widget
     _inputWidget = new QDockWidget(tr("Input area"), this->centralWidget());
-    _inputWidget->setObjectName(QStringLiteral("_inputWidget"));
+    _inputWidget->setObjectName(QLatin1String("_inputWidget"));
     addDockWidget(Qt::BottomDockWidgetArea, _inputWidget, Qt::Vertical);
     _inputTextBox = new QspInputBox(this->centralWidget());
-    _inputTextBox->setObjectName(QStringLiteral("_inputTextBox"));
+    _inputTextBox->setObjectName(QLatin1String("_inputTextBox"));
     _inputWidget->setWidget(_inputTextBox);
-    connect(_inputTextBox, SIGNAL(textChanged()), this, SLOT(OnInputTextChange()));
-    connect(_inputTextBox, SIGNAL(InputTextEnter()), this, SLOT(OnInputTextEnter()));
+    connect(_inputTextBox, &QPlainTextEdit::textChanged, this, &MainWindow::OnInputTextChange);
+    connect(_inputTextBox, &QspInputBox::InputTextEnter, this, &MainWindow::OnInputTextEnter);
 
     m_imgView = new QspImgCanvas(this->centralWidget());
-    m_imgView->setObjectName(QStringLiteral("m_imgView"));
+    m_imgView->setObjectName(QLatin1String("m_imgView"));
     _imgViewWidget = new QDockWidget(tr("Image"), this->centralWidget());
-    _imgViewWidget->setObjectName(QStringLiteral("_imgViewWidget"));
+    _imgViewWidget->setObjectName(QLatin1String("_imgViewWidget"));
     _imgViewWidget->setWidget(m_imgView);
     addDockWidget(Qt::BottomDockWidgetArea, _imgViewWidget, Qt::Vertical);
 
@@ -1190,11 +1174,11 @@ void MainWindow::OnToggleCaptions(bool checked)
     }
     else
     {
-        _mainDescWidget->setTitleBarWidget(0);
-        _objectsWidget->setTitleBarWidget(0);
-        _actionsWidget->setTitleBarWidget(0);
-        _descWidget->setTitleBarWidget(0);
-        _inputWidget->setTitleBarWidget(0);
+        _mainDescWidget->setTitleBarWidget(nullptr);
+        _objectsWidget->setTitleBarWidget(nullptr);
+        _actionsWidget->setTitleBarWidget(nullptr);
+        _descWidget->setTitleBarWidget(nullptr);
+        _inputWidget->setTitleBarWidget(nullptr);
     }
     if(mainTitleBarWidget)
         delete mainTitleBarWidget;

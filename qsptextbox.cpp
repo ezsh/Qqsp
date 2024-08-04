@@ -25,8 +25,8 @@ QspTextBox::QspTextBox(QWidget *parent) : QTextBrowser(parent)
     m_font = font();
     setOpenLinks(false);
 #ifndef _WEBBOX_COMMON
-    connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeAnimations()) );
-    connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeAnimations()) );
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &QspTextBox::resizeAnimations);
+    connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, &QspTextBox::resizeAnimations);
 #endif
 //	m_font = *wxNORMAL_FONT;
 //	m_outFormat = wxString::Format(

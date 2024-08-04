@@ -9,24 +9,21 @@
 #include <QCommandLineParser>
 #include <QFileInfo>
 #ifdef _WEBBOX
-#include <QtWebEngine>
 #include "url_schemes.h"
 #endif
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
 #ifdef _WEBBOX
     register_url_schemes();
-    QtWebEngine::initialize();
 #endif
 
     QApplication a(argc, argv);
     a.setApplicationName("Qqsp");
     a.setOrganizationName("Qqsp");
     a.setApplicationVersion("1.8");
-    a.setDoubleClickInterval(1);
 
     QObject::tr("__LANGNAME__");
     QObject::tr("__LANGID__");
@@ -43,13 +40,19 @@ int main(int argc, char *argv[])
         QSettings settings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());
         langid = settings.value("application/language", QLocale::system().name()).toString();
     }
-    QTranslator qtTranslator;
 
-    if(qtTranslator.load(QApplication::applicationName() + "." + langid, QApplication::applicationDirPath()))
+    QTranslator qspTranslator;
+
+    if (qspTranslator.load(QApplication::applicationName() + "." + langid, QApplication::applicationDirPath()))
+        a.installTranslator(&qspTranslator);
+    else if (qspTranslator.load(QApplication::applicationName() + "." + langid, QLatin1String(":/i18n/")))
+        a.installTranslator(&qspTranslator);
+
+    QTranslator qtTranslator;
+    if (qtTranslator.load(QLatin1String("qtbase_%1").arg(langid.left(2)), QLatin1String(":/i18n/")))
+    {
         a.installTranslator(&qtTranslator);
-    else
-        if(qtTranslator.load(QApplication::applicationName() + "." + langid, ":/translations/"))
-            a.installTranslator(&qtTranslator);
+    }
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Qqsp");

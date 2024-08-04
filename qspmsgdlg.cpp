@@ -1,13 +1,12 @@
 #include "qspmsgdlg.h"
 
-#include <QRect>
-#include <QPalette>
 #include <QDesktopServices>
+#include <QPalette>
+#include <QPushButton>
+#include <QRect>
 
 #include "mainwindow.h"
 
-#include "callbacks_gui.h"
-#include "comtools.h"
 #include "qspstr.h"
 
 QspMsgDlg::QspMsgDlg(QWidget *parent) : QDialog(parent)
@@ -24,17 +23,16 @@ QspMsgDlg::QspMsgDlg(const QString &caption, const QString &text, QWidget *paren
     setWindowTitle(caption);
     sizePolicy().setHorizontalPolicy(QSizePolicy::Expanding);
     sizePolicy().setVerticalPolicy(QSizePolicy::Expanding);
-    connect(&m_desc, SIGNAL(anchorClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
+    connect(&m_desc, &QspTextBox::anchorClicked, this, &QspMsgDlg::OnLinkClicked);
     m_desc.setHtml(text);
     m_desc.sizePolicy().setHorizontalPolicy(QSizePolicy::Expanding);
     m_desc.sizePolicy().setVerticalPolicy(QSizePolicy::Expanding);
-    connect(&okButton, SIGNAL(clicked()), this, SLOT(close()));
-    okButton.setGeometry(QRect(10, 130, 100, 20));
-    okButton.setText(tr("OK"));
+    dialogButtons.setStandardButtons({QDialogButtonBox::StandardButton::Ok});
+    connect(&dialogButtons, &QDialogButtonBox::accepted, this, &QspMsgDlg::close);
     m_desc.document()->setTextWidth(400);
     resize(450, m_desc.document()->size().height() + 65);
     layout.addWidget(&m_desc);
-    layout.addWidget(&okButton);
+    layout.addWidget(&dialogButtons);
     setLayout(&layout);
     setModal(true);
     //exec();
@@ -66,18 +64,17 @@ QspMsgDlg::QspMsgDlg(const QColor& backColor,
     sizePolicy().setVerticalPolicy(QSizePolicy::Expanding);
     m_desc.sizePolicy().setHorizontalPolicy(QSizePolicy::Expanding);
     m_desc.sizePolicy().setVerticalPolicy(QSizePolicy::Expanding);
-    connect(&okButton, SIGNAL(clicked()), this, SLOT(close()));
-    okButton.setGeometry(QRect(10, 130, 100, 20));
-    okButton.setText("OK");
-    okButton.setDefault(true);
-    okButton.setFont(new_font);
-    okButton.setFocus(Qt::PopupFocusReason);
+    dialogButtons.setStandardButtons({QDialogButtonBox::StandardButton::Ok});
+    connect(&dialogButtons, &QDialogButtonBox::accepted, this, &QspMsgDlg::close);
+    dialogButtons.button(QDialogButtonBox::StandardButton::Ok)->setDefault(true);
+    dialogButtons.button(QDialogButtonBox::StandardButton::Ok)->setFont(new_font);
+    dialogButtons.button(QDialogButtonBox::StandardButton::Ok)->setFocus(Qt::PopupFocusReason);
 
     m_desc.document()->setTextWidth(400);
     resize(450, m_desc.document()->size().height() + 65);
 
     layout.addWidget(&m_desc);
-    layout.addWidget(&okButton);
+    layout.addWidget(&dialogButtons);
     setLayout(&layout);
     setModal(true);
     //exec();

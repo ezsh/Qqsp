@@ -25,62 +25,62 @@ QString QSPTools::HtmlizeWhitespaces(const QString& str)
     for (i = str.begin(); i != str.end(); ++i)
     {
         ch = *i;
-        if(ch == QChar('<'))
+        if (ch == QLatin1Char('<'))
         {
-            quote = 0;
+            quote = QLatin1Char(0);
             while (i != str.end())
             {
                 ch = *i;
                 if (quote.unicode())
                 {
-                    if (ch == QChar('\\'))
+                    if (ch == QLatin1Char('\\'))
                     {
                         if (++i == str.end()) break;
                         ch = *i;
                         if (ch == quote)
                         {
-                            if(ch == QChar('"'))
+                            if (ch == QLatin1Char('"'))
                             {
-                                out.append( QString("&quot;") );
+                                out.append(QLatin1String("&quot;"));
                             }
                             else if(ch == QChar('\''))
                             {
-                                out.append( QString("&apos;") );
+                                out.append(QLatin1String("&apos;"));
                             }
                             ++i;
                             continue;
                         }
-                        out.append( QChar('\\') );
+                        out.append(QLatin1Char('\\'));
                     }
-                    if(ch == QChar('&'))
+                    if (ch == QLatin1Char('&'))
                     {
-                        out.append( QString("&amp;") );
+                        out.append(QLatin1String("&amp;"));
                     }
-                    else if(ch == QChar('\n'))
+                    else if (ch == QLatin1Char('\n'))
                     {
-                        out.append( QString("%0A") );
+                        out.append(QLatin1String("%0A"));
                     }
-                    else if(ch == QChar('<'))
+                    else if (ch == QLatin1Char('<'))
                     {
-                        out.append( QString("&lt;") );
+                        out.append(QLatin1String("&lt;"));
                     }
-                    else if (ch == QChar('>'))
+                    else if (ch == QLatin1Char('>'))
                     {
-                        out.append( QString("&gt;") );
+                        out.append(QLatin1String("&gt;"));
                     }
                     else
                     {
                         if (ch == quote)
-                            quote = 0;
+                            quote = QLatin1Char(0);
                         out.append(ch);
                     }
                 }
                 else
                 {
                     out.append(ch);
-                    if (ch == QChar('>'))
+                    if (ch == QLatin1Char('>'))
                         break;
-                    else if (ch == QChar('"') || ch == QChar('\''))
+                    else if (ch == QLatin1Char('"') || ch == QLatin1Char('\''))
                         quote = ch;
                 }
                 ++i;
@@ -88,33 +88,33 @@ QString QSPTools::HtmlizeWhitespaces(const QString& str)
             if (i == str.end()) return out;
             isLastSpace = true;
         }
-        else if(ch == QChar(' '))
+        else if (ch == QLatin1Char(' '))
         {
             if (isLastSpace)
-                out.append( QString("&ensp;") );
+                out.append(QLatin1String("&ensp;"));
             else
-                out.append( QChar(' ') );
+                out.append(QLatin1Char(' '));
             isLastSpace = !isLastSpace;
             ++linepos;
         }
-        else if(ch == QChar('\r'))
+        else if (ch == QLatin1Char('\r'))
         {
 
         }
         else if(ch == QChar('\n'))
         {
-            out.append( QString("<br>") );
+            out.append(QLatin1String("<br>"));
             isLastSpace = true;
             linepos = 0;
         }
-        else if(ch == QChar('\t'))
+        else if (ch == QLatin1Char('\t'))
         {
             for (j = 4 - linepos % 4; j > 0; --j)
             {
                 if (isLastSpace)
-                    out.append( QString("&emsp;") );
+                    out.append(QLatin1String("&emsp;"));
                 else
-                    out.append( QChar(' ') );
+                    out.append(QLatin1Char(' '));
                 isLastSpace = !isLastSpace;
             }
             linepos += 4 - linepos % 4;
@@ -137,17 +137,17 @@ QString QSPTools::ProceedAsPlain(const QString& str)
     for (i = str.begin(); i != str.end(); ++i)
     {
         ch = *i;
-        if( ch == QChar('<'))
+        if (ch == QLatin1Char('<'))
         {
-            out.append( QString("&lt;") );
+            out.append(QLatin1String("&lt;"));
         }
-        else if(ch == QChar('>'))
+        else if (ch == QLatin1Char('>'))
         {
-            out.append( QString("&gt;") );
+            out.append(QLatin1String("&gt;"));
         }
-        else if(ch == QChar('&'))
+        else if (ch == QLatin1Char('&'))
         {
-            out.append( QString("&amp;") );
+            out.append(QLatin1String("&amp;"));
         }
         else
         {
@@ -218,11 +218,8 @@ QString QSPTools::GetCaseInsensitiveAbsoluteFilePath(QString  searchDir, QString
 
 QString QSPTools::qspStrToQt(const QSPString& str)
 {
-//    return QString::fromWCharArray(str.Str, (int)(str.End - str.Str));
-    if(str.Str == nullptr)
-        return QString("");
-    else
-        return QString::fromWCharArray(str.Str, (int)(str.End - str.Str));
+    return str.Str ? QString::fromWCharArray(str.Str, (int)(str.End - str.Str))
+                   : QString{};
 }
 
 void QSPTools::qtStrToQspBuffer(const QString& str, QSP_CHAR* buffer, int bufLen)

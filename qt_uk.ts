@@ -1,46 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ru_RU">
+<TS version="2.1" language="uk">
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="mainwindow.ui" line="79"/>
-        <source>ToolBar</source>
-        <translation>Панель инструментов</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="356"/>
-        <source>Error</source>
-        <translation>Ошибка</translation>
+        <location filename="mainwindow.ui" line="14"/>
+        <source>MainWindow</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="32"/>
         <source>&amp;Quest</source>
-        <translation>&amp;Квест</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="134"/>
-        <source>Open game...</source>
-        <translation>Открыть игру...</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="146"/>
-        <source>Restart game</source>
-        <translation>Перезагрузить игру</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="158"/>
-        <source>Exit</source>
-        <translation>Выход</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="41"/>
         <source>&amp;Game</source>
-        <translation>&amp;Игра</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="14"/>
-        <source>MainWindow</source>
+        <location filename="mainwindow.ui" line="50"/>
+        <source>&amp;Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="54"/>
+        <source>Show / Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="68"/>
+        <source>&amp;Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="79"/>
+        <source>ToolBar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="106"/>
+        <location filename="mainwindow.cpp" line="717"/>
+        <source>Objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="115"/>
+        <location filename="mainwindow.cpp" line="729"/>
+        <source>Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="134"/>
+        <source>Open game...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -49,8 +61,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="mainwindow.ui" line="146"/>
+        <source>Restart game</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="mainwindow.ui" line="149"/>
         <source>Alt+N</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="158"/>
+        <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -61,7 +83,7 @@
     <message>
         <location filename="mainwindow.ui" line="170"/>
         <source>Open saved game...</source>
-        <translation>Открыть сохраненную игру...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="173"/>
@@ -71,12 +93,12 @@
     <message>
         <location filename="mainwindow.ui" line="182"/>
         <source>Save game...</source>
-        <translation>Сохранить игру...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="191"/>
         <source>Quick Load</source>
-        <translation>Быстрая загрузка</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="194"/>
@@ -86,22 +108,7 @@
     <message>
         <location filename="mainwindow.ui" line="203"/>
         <source>Quick Save</source>
-        <translation>Быстрое сохранение</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="279"/>
-        <source>Ctrl+8</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="50"/>
-        <source>&amp;Settings</source>
-        <translation>&amp;Настройки</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="54"/>
-        <source>Show / Hide</source>
-        <translation>Показать / Скрыть</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="206"/>
@@ -111,11 +118,16 @@
     <message>
         <location filename="mainwindow.ui" line="214"/>
         <source>Captions</source>
-        <translation>Заголовки</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="217"/>
         <source>Ctrl+6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="226"/>
+        <source>Options...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -124,13 +136,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="mainwindow.ui" line="237"/>
+        <source>Display HTML code as plain text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="mainwindow.ui" line="240"/>
         <source>Alt+D</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="mainwindow.ui" line="249"/>
+        <source>About...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="mainwindow.ui" line="252"/>
         <source>Ctrl+H</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="261"/>
+        <source>Window / Fullscreen mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -141,108 +168,58 @@
     <message>
         <location filename="mainwindow.ui" line="276"/>
         <source>Hotkeys for actions</source>
-        <translation>Горячие клавиши для действий</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1146"/>
-        <source>&lt;h2&gt;Qqsp&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2017-2019, Sonnix&lt;/p&gt;</source>
-        <translation>&lt;h2&gt;Qqsp&lt;/h2&gt;&lt;p&gt;Авторские права &amp;copy; 2017-2019, Sonnix&lt;/p&gt;</translation>
+        <location filename="mainwindow.ui" line="279"/>
+        <source>Ctrl+8</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;h2&gt;Qqsp&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2017-2018, Sonnix&lt;/p&gt;</source>
-        <translation type="vanished">&lt;h2&gt;Qqsp&lt;/h2&gt;&lt;p&gt;Авторские права &amp;copy; 2017-2018, Sonnix&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <source>Sound volume...</source>
-        <translation type="vanished">Громкость...</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="261"/>
-        <source>Window / Fullscreen mode</source>
-        <translation>Оконный / Полноэкранный режим</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="237"/>
-        <source>Display HTML code as plain text</source>
-        <translation>Отображать исходный код HTML</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="226"/>
-        <source>Options...</source>
-        <translation>Настройки...</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="68"/>
-        <source>&amp;Help</source>
-        <translation>&amp;Помощь</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="249"/>
-        <source>About...</source>
-        <translation>О программе...</translation>
+        <location filename="mainwindow.cpp" line="356"/>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="711"/>
         <source>Main desc</source>
-        <translation>Описание</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="106"/>
-        <location filename="mainwindow.cpp" line="717"/>
-        <source>Objects</source>
-        <translation>Предметы</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="115"/>
-        <location filename="mainwindow.cpp" line="729"/>
-        <source>Actions</source>
-        <translation>Действия</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="742"/>
         <source>Additional desc</source>
-        <translation>Дополнительное описание</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="757"/>
         <source>Input area</source>
-        <translation>Поле ввода</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="768"/>
         <source>Image</source>
-        <translation>Изображение</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1014"/>
         <location filename="mainwindow.cpp" line="1016"/>
         <location filename="mainwindow.cpp" line="1024"/>
         <source>Select game file</source>
-        <translation>Выберите файл игры</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1014"/>
         <location filename="mainwindow.cpp" line="1016"/>
         <location filename="mainwindow.cpp" line="1024"/>
         <source>QSP games (*.qsp *.gam)</source>
-        <translation>Файлы игры QSP (*.qsp *.gam)</translation>
-    </message>
-    <message>
-        <location filename="callbacks_gui.cpp" line="339"/>
-        <source>Info</source>
-        <translation>Информация</translation>
-    </message>
-    <message>
-        <location filename="callbacks_gui.cpp" line="402"/>
-        <source>Input data</source>
-        <translation>Ввод данных</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1058"/>
         <location filename="mainwindow.cpp" line="1060"/>
         <location filename="callbacks_gui.cpp" line="459"/>
         <source>Select saved game file</source>
-        <translation>Выберите файл сохраненной игры</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1058"/>
@@ -252,34 +229,44 @@
         <location filename="callbacks_gui.cpp" line="459"/>
         <location filename="callbacks_gui.cpp" line="493"/>
         <source>Saved game files (*.sav)</source>
-        <translation>Файлы сохранений (*.sav)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1077"/>
         <location filename="mainwindow.cpp" line="1079"/>
         <location filename="callbacks_gui.cpp" line="493"/>
         <source>Select file to save</source>
-        <translation>Выберите файл для сохранения</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1145"/>
         <source>, </source>
-        <translation>, </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;h2&gt;Qqsp&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2017, S.&lt;/p&gt;</source>
-        <translation type="vanished">&lt;h2&gt;Qqsp&lt;/h2&gt;&lt;p&gt;Авторские права &amp;copy; 2017, S.&lt;/p&gt;</translation>
+        <location filename="mainwindow.cpp" line="1146"/>
+        <source>&lt;h2&gt;Qqsp&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2017-2019, Sonnix&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1148"/>
         <source>&lt;p&gt;Application version: %1&lt;br&gt;QSP library version: %2&lt;br&gt;Qt library version: %3&lt;br&gt;Application compilation date: %4&lt;br&gt;Library compilation date: %5&lt;/p&gt;</source>
-        <oldsource>&lt;p&gt;Application version: %1&lt;br&gt;QSP library version: %2&lt;br&gt;Application compilation date: %3&lt;br&gt;Library compilation date: %4&lt;/p&gt;</oldsource>
-        <translation>&lt;p&gt;Версия приложения: %1&lt;br&gt;Версия библиотеки QSP: %2&lt;br&gt;Версия библиотеки Qt: %3&lt;br&gt;Дата компиляции приложения: %4&lt;br&gt;Дата компиляции библиотеки: %5&lt;/p&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1149"/>
         <source>About</source>
-        <translation>О программе</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="callbacks_gui.cpp" line="339"/>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="callbacks_gui.cpp" line="402"/>
+        <source>Input data</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -287,17 +274,17 @@
     <message>
         <location filename="optionsdialog.ui" line="17"/>
         <source>Options</source>
-        <translation>Настройки</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="28"/>
         <source>Use custom font size</source>
-        <translation>Использовать выбранный размер шрифта</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="42"/>
         <source>Use custom font</source>
-        <translation>Использовать выбранный шрифт</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="71"/>
@@ -305,57 +292,57 @@
         <location filename="optionsdialog.ui" line="207"/>
         <location filename="optionsdialog.ui" line="256"/>
         <source>Select</source>
-        <translation>Выбрать</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="80"/>
         <source>Custom background color</source>
-        <translation>Использовать выбранный цвет фона</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="136"/>
         <source>Language</source>
-        <translation>Язык (Language)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="146"/>
         <source>Custom text color</source>
-        <translation>Использовать выбранный цвет текста</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="153"/>
         <source>Custom link color</source>
-        <translation>Использовать выбранный цвет ссылок</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="160"/>
         <source>Autostart last game</source>
-        <translation>Автозагрузка последней игры</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="265"/>
         <source>Separate config per game</source>
-        <translation>Отдельные настройки для каждой игры</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="272"/>
         <source>Sound volume</source>
-        <translation>Громкость звука</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="289"/>
         <source>Disable video</source>
-        <translation>Отключить поддержку видео</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="296"/>
         <source>Force autoplay and loop for video</source>
-        <translation>Добавлять autoplay и loop для &lt;video&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="303"/>
         <source>HTML5 Extras (experimental)</source>
-        <translation>Экспериментальный функционал для HTML5</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.ui" line="313"/>
@@ -368,27 +355,19 @@
         <source>Use case insensitive paths</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Отмена</translation>
-    </message>
-    <message>
-        <source>Ok</source>
-        <translation type="vanished">Ок</translation>
-    </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <location filename="main.cpp" line="28"/>
         <source>__LANGNAME__</source>
-        <translation>Русский</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="main.cpp" line="29"/>
         <location filename="mainwindow.cpp" line="111"/>
         <source>__LANGID__</source>
-        <translation>ru_RU</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -396,7 +375,7 @@
     <message>
         <location filename="qspexecwebengineurlschemehandler.cpp" line="53"/>
         <source>Error</source>
-        <translation>Ошибка</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -404,14 +383,7 @@
     <message>
         <location filename="qspimgcanvas.cpp" line="9"/>
         <source>Image</source>
-        <translation>Изображение</translation>
-    </message>
-</context>
-<context>
-    <name>QspMsgDlg</name>
-    <message>
-        <source>OK</source>
-        <translation type="vanished">Ок</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -419,7 +391,7 @@
     <message>
         <location filename="qspwebchannel.cpp" line="39"/>
         <source>Error</source>
-        <translation>Ошибка</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -428,14 +400,14 @@
         <location filename="optionsdialog.cpp" line="60"/>
         <location filename="optionsdialog.cpp" line="74"/>
         <source>__LANGNAME__</source>
-        <translation>Русский</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="optionsdialog.cpp" line="60"/>
         <location filename="optionsdialog.cpp" line="70"/>
         <location filename="optionsdialog.cpp" line="74"/>
         <source>__LANGID__</source>
-        <translation>ru_RU</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -443,7 +415,7 @@
     <message>
         <location filename="main.cpp" line="59"/>
         <source>Game file to open.</source>
-        <translation>Путь до файла игры.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
