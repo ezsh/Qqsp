@@ -18,8 +18,8 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR True)
 
-add_executable(qqsp)
-target_sources(qqsp PRIVATE
+add_executable(Qqsp)
+target_sources(Qqsp PRIVATE
 	main.cpp
 	mainwindow.cpp
 	qsptextbox.cpp
@@ -52,10 +52,10 @@ target_sources(qqsp PRIVATE
 	qqsp.qrc
 )
 
-target_link_libraries(qqsp PRIVATE Qsp::qsp Qt::Multimedia Qt::MultimediaWidgets Qt::Widgets)
+target_link_libraries(Qqsp PRIVATE Qsp::qsp Qt::Multimedia Qt::MultimediaWidgets Qt::Widgets)
 
 if(Qt6WebEngineWidgets_FOUND)
-	target_sources(qqsp PRIVATE
+	target_sources(Qqsp PRIVATE
 		qspwebbox.cpp
 		qspwebengineurlrequestinterceptor.cpp
 		qspwebengineurlschemehandler.cpp
@@ -70,19 +70,19 @@ if(Qt6WebEngineWidgets_FOUND)
 		qspwebchannel.h
 	)
 
-	target_compile_definitions(qqsp PRIVATE _WEBBOX _WEBBOX_COMMON)
-	target_link_libraries(qqsp PRIVATE Qt::WebEngineCore Qt::WebEngineWidgets)
+    target_compile_definitions(Qqsp PRIVATE _WEBBOX _WEBBOX_COMMON)
+    target_link_libraries(Qqsp PRIVATE Qt::WebEngineCore Qt::WebEngineWidgets)
 endif()
 
 if (Qt6LinguistTools_FOUND)
-	qt_add_translations(qqsp
+	qt_add_translations(Qqsp
 		TS_FILES
 		    Qqsp.en.ts Qqsp.ru.ts Qqsp.uk.ts
 			qt_uk.ts qtbase_uk.ts
 	)
 endif()
 
-install(TARGETS qqsp DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(TARGETS Qqsp DESTINATION "${CMAKE_INSTALL_BINDIR}")
 if (LINUX)
 	install(FILES Qqsp.desktop DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications")
 	install(FILES qsp.mime DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages" RENAME qsp.xml)
