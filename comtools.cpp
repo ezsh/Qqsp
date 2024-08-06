@@ -232,8 +232,10 @@ void QSPTools::qtStrToQspBuffer(const QString& str, QSP_CHAR* buffer, int bufLen
 #else
     const auto stdStr = str.toStdString();
 #endif
+    static_assert(sizeof(decltype(stdStr)::value_type) == sizeof(QSP_CHAR));
+
     int charsToCopy = qMin(str.size() + 1, bufLen);
-    memccpy(buffer, stdStr.c_str(), sizeof(QSP_CHAR), charsToCopy);
+    std::memcpy(buffer, stdStr.c_str(), sizeof(QSP_CHAR) * charsToCopy);
 }
 
 QColor QSPTools::wxtoQColor(int wxColor)
