@@ -709,7 +709,7 @@ void MainWindow::CreateDockWindows()
     connect(_mainDescTextBox, &QspWebBox::qspLinkClicked, this, &MainWindow::OnLinkClicked);
 #endif
     _mainDescTextBox->setObjectName(QStringLiteral("_mainDescTextBox"));
-    _mainDescWidget = new QDockWidget(tr("Main desc"), this->centralWidget());
+    _mainDescWidget = new QDockWidget(tr("Main desc"), this);
     _mainDescWidget->setObjectName(QStringLiteral("_mainDescWidget"));
     addDockWidget(Qt::TopDockWidgetArea, _mainDescWidget, Qt::Vertical);
     _mainDescWidget->setWidget(_mainDescTextBox);
@@ -772,6 +772,9 @@ void MainWindow::CreateDockWindows()
 
     splitDockWidget(_actionsWidget, _inputWidget, Qt::Vertical);
     splitDockWidget(_mainDescWidget, _objectsWidget, Qt::Horizontal);
+
+    setCentralWidget(nullptr);
+    setDockNestingEnabled(true);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
