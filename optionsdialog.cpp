@@ -46,7 +46,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     ui->checkBox_videoFix->setChecked(mw->GetVideoFix());
     ui->checkBox_HTML5Extras->setChecked(mw->GetAllowHTML5Extras());
     ui->checkBox_CaseInsensitiveFilePath->setChecked(mw->GetUseCaseInsensitiveFilePath());
-#ifdef _WIN32
+#ifdef Q_OS_WIN
     ui->checkBox_CaseInsensitiveFilePath->setVisible(false);
 #endif
 

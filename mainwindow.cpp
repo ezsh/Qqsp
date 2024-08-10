@@ -22,10 +22,12 @@
 #include <QSettings>
 #include <QThread>
 
-#ifdef _ANDROIDQT
+#ifdef Q_OS_ANDROID
 #include <QStandardPaths>
 #include "androidfiledialog.h"
 #endif
+
+#include <qqsp-config.h>
 
 #include "ui_mainwindow.h"
 
@@ -44,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     setObjectName(QStringLiteral("MainWindow"));
     setAcceptDrops(true);
 
-#ifdef _WEBBOX
+#ifdef QT_WEBENGINEWIDGETS_LIB
 //    qwuri = new QspWebEngineUrlRequestInterceptor();
 //    QWebEngineProfile::defaultProfile()->setRequestInterceptor(qwuri);
 //    QspWebEngineUrlSchemeHandler *qweush = new QspWebEngineUrlSchemeHandler();
@@ -441,7 +443,7 @@ void MainWindow::SetOverallVolume(float new_volume)
 void MainWindow::SetDisableVideo(bool isDisableVideo)
 {
     disableVideo = isDisableVideo;
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
     _mainDescTextBox->SetDisableVideo(disableVideo);
     _descTextBox->SetDisableVideo(disableVideo);
 #endif
@@ -450,7 +452,7 @@ void MainWindow::SetDisableVideo(bool isDisableVideo)
 void MainWindow::SetVideoFix(bool isFix)
 {
     m_videoFix = isFix;
-#ifdef _WEBBOX_COMMON
+#ifdef QT_WEBENGINEWIDGETS_LIB
     _mainDescTextBox->SetVideoFix(m_videoFix);
     _descTextBox->SetVideoFix(m_videoFix);
 #endif
@@ -699,11 +701,10 @@ void MainWindow::CreateMenuBar()
 void MainWindow::CreateDockWindows()
 {
     // "Main desc" widget
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
     _mainDescTextBox = new QspTextBox(this->centralWidget());
     connect(_mainDescTextBox, &QspTextBox::anchorClicked, this, &MainWindow::OnLinkClicked);
-#endif
-#ifdef _WEBBOX
+#else
     _mainDescTextBox = new QspWebBox(this->centralWidget());
     connect(_mainDescTextBox, &QspWebBox::qspLinkClicked, this, &MainWindow::OnLinkClicked);
 #endif
@@ -742,11 +743,10 @@ void MainWindow::CreateDockWindows()
     _descWidget = new QDockWidget(tr("Additional desc"), this->centralWidget());
     _descWidget->setObjectName(QStringLiteral("_descWidget"));
     addDockWidget(Qt::BottomDockWidgetArea, _descWidget, Qt::Horizontal);
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
     _descTextBox = new QspTextBox(this->centralWidget());
     connect(_descTextBox, SIGNAL(anchorClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
-#endif
-#ifdef _WEBBOX
+#else
     _descTextBox = new QspWebBox(this->centralWidget());
     connect(_descTextBox, &QspWebBox::qspLinkClicked, this, &MainWindow::OnLinkClicked);
 #endif
@@ -776,7 +776,7 @@ void MainWindow::CreateDockWindows()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-#ifdef _WEBBOX
+#ifdef QT_WEBENGINEWIDGETS_LIB
     _mainDescTextBox->Quit();
     _descTextBox->Quit();
     //delete _mainDescTextBox;
@@ -881,7 +881,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_Escape)
         if(isFullScreen())
             showNormal();
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
     _descTextBox->keyPressEvent(event);
     _mainDescTextBox->keyPressEvent(event);
 #endif
@@ -1009,12 +1009,13 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 
 void MainWindow::OnOpenGame()
 {
-#ifndef _ANDROIDQT
-    #ifndef _NONATIVEDIALOG
+#ifndef Q_OS_ANDROID
+#ifndef NO_NATIVE_DIALOGS
     QString path = QFileDialog::getOpenFileName(this, tr("Select game file"), GetLastPath(), tr("QSP games (*.qsp *.gam)"));
-    #else
-    QString path = QFileDialog::getOpenFileName(this, tr("Select game file"), GetLastPath(), tr("QSP games (*.qsp *.gam)"), nullptr, QFileDialog::DontUseNativeDialog);
-    #endif
+#else
+    QString path =
+        QFileDialog::getOpenFileName(this, tr("Select game file"), GetLastPath(), tr("QSP games (*.qsp *.gam)"), nullptr, QFileDialog::DontUseNativeDialog);
+#endif
     if (!path.isEmpty())
     {
         SetLastPath(QFileInfo(path).canonicalPath());
@@ -1054,7 +1055,7 @@ void MainWindow::OnOpenSavedGame()
 {
     if(!m_isGameOpened)
         return;
-#ifndef _NONATIVEDIALOG
+#ifndef NO_NATIVE_DIALOGS
     QString path = QFileDialog::getOpenFileName(this, tr("Select saved game file"), GetLastPath(), tr("Saved game files (*.sav)"));
 #else
     QString path = QFileDialog::getOpenFileName(this, tr("Select saved game file"), GetLastPath(), tr("Saved game files (*.sav)"), nullptr, QFileDialog::DontUseNativeDialog);
@@ -1073,7 +1074,7 @@ void MainWindow::OnSaveGame()
 {
     if(!m_isGameOpened)
         return;
-#ifndef _NONATIVEDIALOG
+#ifndef NO_NATIVE_DIALOGS
     QString path = QFileDialog::getSaveFileName(this, tr("Select file to save"), GetLastPath(), tr("Saved game files (*.sav)"));
 #else
     QString path = QFileDialog::getSaveFileName(this, tr("Select file to save"), GetLastPath(), tr("Saved game files (*.sav)"), nullptr, QFileDialog::DontUseNativeDialog);
@@ -1243,13 +1244,13 @@ void MainWindow::OnLinkClicked(const QUrl &url)
     {
         QObject* obj = sender();
         if (obj == _mainDescTextBox)
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
             _mainDescTextBox->setSource(url);
 #else
             _mainDescTextBox->setUrl(url);
 #endif
         else
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
             _descTextBox->setSource(url);
 #else
             _descTextBox->setUrl(url);

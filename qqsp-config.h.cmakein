@@ -1,0 +1,6 @@
+#ifndef QQSP_CONFIG_H
+#define QQSP_CONFIG_H
+
+#cmakedefine NO_NATIVE_DIALOGS
+
+#endif

@@ -18,7 +18,7 @@
 #include "comtools.h"
 #include "qspmsgdlg.h"
 
-#ifdef _WEBBOX
+#ifdef QT_WEBENGINEWIDGETS_LIB
 #include "qspwebbox.h"
 #endif
 

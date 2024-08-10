@@ -17,6 +17,8 @@
 
 #include "videolabel.h"
 
+#include <qqsp-config.h>
+
 struct animation_gif
 {
     QMovie *movie;
@@ -59,7 +61,7 @@ public:
     void SetShowPlainText(bool isPlain);
     void SetDisableVideo(bool isDisableVideo) { disableVideo = isDisableVideo; }
     void keyPressEvent(QKeyEvent *event);
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
     void SetBackgroundImage(const QImage& bmpBg);
     void LoadBackImage(const QString& fileName);
     //TODO:
@@ -72,7 +74,7 @@ public:
 private:
     // Internal methods
     void wheelEvent(QWheelEvent *e);
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
     void CalcImageSize();
     void paintEvent(QPaintEvent *e);
     QVariant loadResource(int type, const QUrl &name);
@@ -94,7 +96,7 @@ private:
     QColor m_fontColor;
     bool showPlainText;
     bool disableVideo;
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
     QImage m_bmpBg;
     QImage m_bmpRealBg;
     QMap<QString, animation_gif> animations_gif;
@@ -102,7 +104,7 @@ private:
     QMutex mutex;
 #endif
 
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
 private slots:
     void repaintAnimation();
     void resizeAnimations();

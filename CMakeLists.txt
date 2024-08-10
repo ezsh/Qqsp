@@ -12,11 +12,14 @@ find_package(Qt6 6.7 COMPONENTS LinguistTools WebEngineCore WebEngineWidgets)
 find_package(Qt6 6.7 REQUIRED COMPONENTS Core Gui Multimedia MultimediaWidgets Widgets)
 find_package(Qsp REQUIRED)
 
+option(NO_NATIVE_DIALOGS "Do not use native file open/sav dialogs" OFF)
+configure_file(qqsp-config.h.cmakein qqsp-config.h @ONLY)
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_INCLUDE_CURRENT_DIR True)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_executable(Qqsp)
 target_sources(Qqsp PRIVATE
@@ -32,7 +35,6 @@ target_sources(Qqsp PRIVATE
 	callbacks_gui.cpp
 	comtools.cpp
 	optionsdialog.cpp
-	# videoframeprocessor.cpp
 	videolabel.cpp
 	mainwindow.h
 	qsptextbox.h
@@ -45,7 +47,6 @@ target_sources(Qqsp PRIVATE
 	callbacks_gui.h
 	comtools.h
 	optionsdialog.h
-	# videoframeprocessor.h
 	videolabel.h
 	mainwindow.ui
 	optionsdialog.ui
@@ -70,14 +71,13 @@ if(Qt6WebEngineWidgets_FOUND)
 		qspwebchannel.h
 	)
 
-    target_compile_definitions(Qqsp PRIVATE _WEBBOX _WEBBOX_COMMON)
-    target_link_libraries(Qqsp PRIVATE Qt::WebEngineCore Qt::WebEngineWidgets)
+	target_link_libraries(Qqsp PRIVATE Qt::WebEngineCore Qt::WebEngineWidgets)
 endif()
 
 if (Qt6LinguistTools_FOUND)
 	qt_add_translations(Qqsp
 		TS_FILES
-		    Qqsp.en.ts Qqsp.ru.ts Qqsp.uk.ts
+			Qqsp.en.ts Qqsp.ru.ts Qqsp.uk.ts
 			qt_uk.ts qtbase_uk.ts
 	)
 endif()

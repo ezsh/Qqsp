@@ -8,7 +8,8 @@
 #include <QLocale>
 #include <QCommandLineParser>
 #include <QFileInfo>
-#ifdef _WEBBOX
+
+#ifdef QT_WEBENGINEWIDGETS_LIB
 #include "url_schemes.h"
 #endif
 
@@ -16,7 +17,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
-#ifdef _WEBBOX
+#ifdef QT_WEBENGINEWIDGETS_LIB
     register_url_schemes();
 #endif
 

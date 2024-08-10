@@ -167,7 +167,7 @@ QString QSPTools::GetCaseInsensitiveFilePath(QString  searchDir, QString origina
     QString new_name = originalPath.replace("\\", "/");
     if(new_name.startsWith("/"))
         new_name = new_name.remove(0, 1);
-#ifndef _WIN32
+#ifndef Q_OS_WIN
     if(useCaseInsensitiveFilePath)
     {
         QDir itDir(searchDir);

@@ -22,14 +22,15 @@
 #include "qsplistbox.h"
 #include "qspinputbox.h"
 #include "qspimgcanvas.h"
-#ifdef _WEBBOX
-#include <QWebEngineProfile>
+
+#include <qsp_default.h>
+
+#ifdef QT_WEBENGINEWIDGETS_LIB
 #include "qspwebbox.h"
+#include <QWebEngineProfile>
 #else
 #include "qsptextbox.h"
 #endif
-
-#include <qsp_default.h>
 
 #define QSP_LOGO "Qt Quest Soft Player"
 #define QSP_APPNAME "Qqsp"
@@ -62,7 +63,7 @@ public:
 
     // Accessors
     QTimer *GetTimer() const { return m_timer; }
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
     QspTextBox *GetDesc() const { return _mainDescTextBox; }
     QspTextBox *GetVars() const { return _descTextBox; }
 #else
@@ -151,7 +152,7 @@ private:
 
     Ui::MainWindow* _ui;
     //QStatusBar*     mainStatusBar;
-#ifndef _WEBBOX_COMMON
+#ifndef QT_WEBENGINEWIDGETS_LIB
     QspTextBox*		_mainDescTextBox; //m_desc
     QspTextBox*		_descTextBox; //m_vars ID_VARSDESC
 #else
