@@ -2,6 +2,7 @@
 
 #include "callbacks_gui.h"
 #include "comtools.h"
+#include "debuglogwindow.h"
 #include "optionsdialog.h"
 #include "qspstr.h"
 
@@ -31,7 +32,7 @@
 
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , _ui(new Ui::MainWindow())
 {
@@ -116,6 +117,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     CreateDockWindows();
 
+    _debugLogWindow = new DebugLogWindow(_ui->actionDebug_log, this);
+
     ApplyBackColor(m_backColor);
     ApplyFontColor(m_fontColor);
     ApplyLinkColor(m_linkColor);
@@ -137,7 +140,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_menu, &QMenu::triggered, this, &MainWindow::OnMenu);
 
     QSPInit();
-    QSPCallBacks::Init(this);
+    QSPCallBacks::Init(this, _debugLogWindow);
     QSPCallBacks::SetAllowHTML5Extras(m_isAllowHTML5Extras);
     SetOverallVolume(m_volume);
 
@@ -661,7 +664,7 @@ void MainWindow::CreateMenuBar()
 
     // ToolBar
     action = _ui->mainToolBar->toggleViewAction();
-    action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_7));
+    action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
     _ui->_showHideMenu->addAction(action);
 
     //TODO: MenuBar
@@ -685,8 +688,8 @@ void MainWindow::CreateMenuBar()
     // Display HTML code as plain text
     connect(_ui->actionDisplay_HTML_code_as_plain_text, &QAction::triggered, this, &ThisType::OnToggleShowPlainText);
     _ui->actionDisplay_HTML_code_as_plain_text->setChecked(showPlainText);
-//    _settingsMenu->addAction(tr("Display HTML code as plain text"),
-//        this, SLOT(OnToggleShowPlainText()), QKeySequence(Qt::ALT + Qt::Key_D))->setCheckable(true);
+    //    _settingsMenu->addAction(tr("Display HTML code as plain text"),
+    //        this, SLOT(OnToggleShowPlainText()), QKeySequence(Qt::ALT + Qt::Key_D))->setCheckable(true);
 
     // Options item
     connect(_ui->actionOptions, &QAction::triggered, this, &ThisType::OnOptions);

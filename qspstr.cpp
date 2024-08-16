@@ -9,4 +9,7 @@ QSPStr::QSPStr(QString s)
 {
 }
 
-QSPStr::operator QSPString() const { return {const_cast<wchar_t*>(_str.c_str()), const_cast<wchar_t*>(_str.c_str()) + _str.size()}; }
+QSPStr::operator QSPString() const
+{
+    return {const_cast<str::value_type*>(_str.c_str()), const_cast<str::value_type*>(_str.c_str()) + _str.size()};
+}

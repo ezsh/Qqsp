@@ -23,6 +23,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_executable(Qqsp)
 target_sources(Qqsp PRIVATE
+	debuglogwindow.h debuglogwindow.cpp
 	main.cpp
 	mainwindow.cpp
 	qsptextbox.cpp
@@ -48,6 +49,7 @@ target_sources(Qqsp PRIVATE
 	comtools.h
 	optionsdialog.h
 	videolabel.h
+	debuglogwindow.ui
 	mainwindow.ui
 	optionsdialog.ui
 	qqsp.qrc

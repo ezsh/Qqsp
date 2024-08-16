@@ -39,6 +39,8 @@
 #define QSP_QUICKSAVE "quicksave.sav"
 #define QSP_GAME "game.qsp"
 
+class DebugLogWindow;
+
 namespace Ui {
 class MainWindow;
 }
@@ -167,6 +169,8 @@ private:
     QDockWidget*	_actionsWidget; //m_actions
     QDockWidget*	_descWidget; //m_vars ID_VARSDESC
     QDockWidget*	_inputWidget; //m_input
+    DebugLogWindow* _debugLogWindow;
+    QAction* _debugLogWindowToggleAction;
     QDockWidget*    _mainDescWidget;
     QString lastPath; //For QFileDialog
     QString lastGame;

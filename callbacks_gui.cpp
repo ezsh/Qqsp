@@ -16,6 +16,7 @@
 #include <cmath>
 
 #include "comtools.h"
+#include "debuglogwindow.h"
 #include "qspmsgdlg.h"
 
 #ifdef QT_WEBENGINEWIDGETS_LIB
@@ -24,6 +25,7 @@
 
 QString QSPCallBacks::m_gamePath;
 MainWindow *QSPCallBacks::m_frame;
+DebugLogWindow* QSPCallBacks::m_debugLogWindow;
 bool QSPCallBacks::m_isHtml;
 QSPSounds QSPCallBacks::m_sounds;
 float QSPCallBacks::m_volumeCoeff;
@@ -61,16 +63,16 @@ QByteArray loadFile(const QSPString& path)
 }
 } // namespace
 
-void QSPCallBacks::Init(MainWindow* frame)
+void QSPCallBacks::Init(MainWindow* frame, DebugLogWindow* debugLogWindow)
 {
     m_frame = frame;
+    m_debugLogWindow = debugLogWindow;
     m_volumeCoeff = 1.0f;
 
     m_isAllowHTML5Extras = false;
 
-    // TODO: implement this?
-    // QSP_CALL_DEBUG, /* void func(QSPString str) */
-
+    /* void func(QSPString str) */
+    QSPSetCallBack(QSP_CALL_DEBUG, (QSP_CALLBACK)&Debug);
     // QSP_CALL_ISPLAYINGFILE, /* QSP_BOOL func(QSPString file) */
     QSPSetCallBack(QSP_CALL_ISPLAYINGFILE, (QSP_CALLBACK)&IsPlay);
     // QSP_CALL_PLAYFILE,            /* void func(QSPString file, int volume) */
@@ -498,6 +500,11 @@ bool QSPCallBacks::SaveGameStatusEx(const QSPString& file, bool isRefresh)
 		}
 		return false;
 	}
+}
+
+void QSPCallBacks::Debug(QSPString str)
+{
+    m_debugLogWindow->appendLine(QSPTools::qspStrToQt(str));
 }
 
 void QSPCallBacks::SaveGameStatus(QSPString file)

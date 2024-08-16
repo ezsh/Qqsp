@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>1069</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="_fileMenu">
@@ -51,9 +51,10 @@
     </property>
     <widget class="QMenu" name="_showHideMenu">
      <property name="title">
-      <string>Show / Hide</string>
+      <string>&amp;Show / Hide</string>
      </property>
      <addaction name="actionCaptions"/>
+     <addaction name="actionDebug_log"/>
      <addaction name="actionHotkeys_for_actions"/>
     </widget>
     <addaction name="_showHideMenu"/>
@@ -99,11 +100,8 @@
    <addaction name="actionAbout"/>
   </widget>
   <widget class="QDockWidget" name="objectsWidget">
-   <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
-   </property>
    <property name="windowTitle">
-    <string>Objects</string>
+    <string>Ob&amp;jects</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -131,7 +129,7 @@
      <normaloff>:/gfx/menu/open</normaloff>:/gfx/menu/open</iconset>
    </property>
    <property name="text">
-    <string>Open game...</string>
+    <string>&amp;Open game...</string>
    </property>
    <property name="shortcut">
     <string>Alt+O</string>
@@ -143,7 +141,7 @@
      <normaloff>:/gfx/menu/new</normaloff>:/gfx/menu/new</iconset>
    </property>
    <property name="text">
-    <string>Restart game</string>
+    <string>&amp;Restart game</string>
    </property>
    <property name="shortcut">
     <string>Alt+N</string>
@@ -155,7 +153,7 @@
      <normaloff>:/gfx/menu/exit</normaloff>:/gfx/menu/exit</iconset>
    </property>
    <property name="text">
-    <string>Exit</string>
+    <string>&amp;Exit</string>
    </property>
    <property name="shortcut">
     <string>Alt+X</string>
@@ -167,7 +165,7 @@
      <normaloff>:/gfx/menu/statusopen</normaloff>:/gfx/menu/statusopen</iconset>
    </property>
    <property name="text">
-    <string>Open saved game...</string>
+    <string>&amp;Open saved game...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -179,16 +177,15 @@
      <normaloff>:/gfx/menu/statussave</normaloff>:/gfx/menu/statussave</iconset>
    </property>
    <property name="text">
-    <string>Save game...</string>
+    <string>&amp;Save game...</string>
    </property>
   </action>
   <action name="actionQuick_load">
    <property name="icon">
-    <iconset theme="document-open-recent">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="document-open-recent"/>
    </property>
    <property name="text">
-    <string>Quick Load</string>
+    <string>&amp;Quick Load</string>
    </property>
    <property name="shortcut">
     <string>F9</string>
@@ -196,11 +193,10 @@
   </action>
   <action name="actionQuick_save">
    <property name="icon">
-    <iconset theme="document-save">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="document-save"/>
    </property>
    <property name="text">
-    <string>Quick Save</string>
+    <string>Q&amp;uick Save</string>
    </property>
    <property name="shortcut">
     <string>F5</string>
@@ -211,19 +207,18 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Captions</string>
+    <string>&amp;Captions</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+6</string>
+    <string>Ctrl+7</string>
    </property>
   </action>
   <action name="actionOptions">
    <property name="icon">
-    <iconset theme="configure">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="configure"/>
    </property>
    <property name="text">
-    <string>Options...</string>
+    <string>&amp;Options...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+O</string>
@@ -234,7 +229,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Display HTML code as plain text</string>
+    <string>&amp;Display HTML code as plain text</string>
    </property>
    <property name="shortcut">
     <string>Alt+D</string>
@@ -246,7 +241,7 @@
      <normaloff>:/gfx/menu/about</normaloff>:/gfx/menu/about</iconset>
    </property>
    <property name="text">
-    <string>About...</string>
+    <string>&amp;About...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
@@ -258,7 +253,7 @@
      <normaloff>:/gfx/menu/windowmode</normaloff>:/gfx/menu/windowmode</iconset>
    </property>
    <property name="text">
-    <string>Window / Fullscreen mode</string>
+    <string>&amp;Window / Fullscreen mode</string>
    </property>
    <property name="shortcut">
     <string>F11</string>
@@ -269,26 +264,26 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="configure-shortcuts">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="configure-shortcuts"/>
    </property>
    <property name="text">
-    <string>Hotkeys for actions</string>
+    <string>&amp;Hotkeys for actions</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+9</string>
+   </property>
+  </action>
+  <action name="actionDebug_log">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Debug log</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+8</string>
    </property>
   </action>
-  <zorder>dockWidget_5</zorder>
-  <zorder>dockWidget</zorder>
-  <zorder>dockWidget_2</zorder>
-  <zorder>dockWidget_3</zorder>
-  <zorder>dockWidget_4</zorder>
-  <zorder>dockWidget_6</zorder>
-  <zorder>dockWidget_7</zorder>
-  <zorder>dockWidget_8</zorder>
-  <zorder>mainDescWidget</zorder>
-  <zorder>dockWidget_9</zorder>
   <zorder>objectsWidget</zorder>
   <zorder>actionsWidget</zorder>
   <zorder>dockWidget_9</zorder>

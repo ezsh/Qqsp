@@ -2,12 +2,15 @@
 #define CALLBACKS_GUI_H
 
 #include "mainwindow.h"
+
 #include <QAudioOutput>
 #include <QMediaPlayer>
 #include <QString>
 #include <qsp_default.h>
 
 #include <map>
+
+class DebugLogWindow;
 
 struct QSPSound
 {
@@ -50,7 +53,7 @@ class QSPCallBacks
 {
 public:
     // Methods
-    static void Init(MainWindow *frame);
+    static void Init(MainWindow* frame, DebugLogWindow* debugLogWindow);
     static void DeInit();
     static void SetOverallVolume(float coeff);
     static void SetAllowHTML5Extras(bool HTML5Extras);
@@ -76,6 +79,7 @@ public:
     static bool OpenGameStatusEx(const QSPString& file, bool isRefresh);
     static void SaveGameStatus(QSPString file);
     static bool SaveGameStatusEx(const QSPString& file, bool isRefresh);
+    static void Debug(QSPString str);
 
     static QString m_gamePath;
 private:
@@ -86,6 +90,7 @@ private:
 
     // Fields
     static MainWindow *m_frame;
+    static DebugLogWindow* m_debugLogWindow;
     static bool m_isHtml;
     static QSPSounds m_sounds;
     static float m_volumeCoeff;
