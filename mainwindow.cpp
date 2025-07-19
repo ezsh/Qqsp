@@ -176,19 +176,19 @@ void MainWindow::EnableControls(bool status, bool isExtended)
 
 void MainWindow::ApplyParams()
 {
-    int numVal;
-    QSPString strVal;
+    QSPVariant val;
     QColor setBackColor, setFontColor, setLinkColor;
     setPalette(m_palette);
     // --------------
     if(!m_isUseBackColor)
     {
-        if(QSPGetVarValues(L"BCOLOR"_qsp, 0, &numVal, &strVal))
+        if (QSPGetVarValue(L"BCOLOR"_qsp, 0, &val))
         {
-            if(numVal == 0)
+            assert(QSP_ISNUM(val.Type));
+            if (QSP_NUM(val) == 0)
                 setBackColor = m_defaultBackColor;
             else
-                setBackColor = QSPTools::wxtoQColor(numVal);
+                setBackColor = QSPTools::wxtoQColor(QSP_NUM(val));
         }
         else
             setBackColor = m_defaultBackColor;
@@ -201,12 +201,13 @@ void MainWindow::ApplyParams()
     // --------------
     if(!m_isUseFontColor)
     {
-        if(QSPGetVarValues(L"FCOLOR"_qsp, 0, &numVal, &strVal))
+        if (QSPGetVarValue(L"FCOLOR"_qsp, 0, &val))
         {
-            if(numVal == 0)
+            assert(QSP_ISNUM(val.Type));
+            if (QSP_NUM(val) == 0)
                 setFontColor = m_defaultFontColor;
             else
-                setFontColor = QSPTools::wxtoQColor(numVal);
+                setFontColor = QSPTools::wxtoQColor(QSP_NUM(val));
         }
         else
             setFontColor = m_defaultFontColor;
@@ -219,12 +220,13 @@ void MainWindow::ApplyParams()
     // --------------
     if(!m_isUseLinkColor)
     {
-        if(QSPGetVarValues(L"LCOLOR"_qsp, 0, &numVal, &strVal))
+        if (QSPGetVarValue(L"LCOLOR"_qsp, 0, &val))
         {
-            if(numVal == 0)
+            assert(QSP_ISNUM(val.Type));
+            if (QSP_NUM(val) == 0)
                 setLinkColor = m_defaultLinkColor;
             else
-                setLinkColor = QSPTools::wxtoQColor(numVal);
+                setLinkColor = QSPTools::wxtoQColor(QSP_NUM(val));
         }
         else
             setLinkColor = m_defaultLinkColor;
@@ -240,24 +242,26 @@ void MainWindow::ApplyParams()
     int sizeType = 0;
     if(!m_isUseFont)
     {
-        if(QSPGetVarValues(L"FNAME"_qsp, 0, &numVal, &strVal))
+        if (QSPGetVarValue(L"FNAME"_qsp, 0, &val))
         {
-            if(strVal.Str)
+            assert(QSP_ISSTR(val.Type));
+            if (QSP_STR(val).Str)
             {
-                if(!QSPTools::qspStrToQt(strVal).isEmpty())
+                if (!QSPTools::qspStrToQt(QSP_STR(val)).isEmpty())
                 {
-                    new_font.setFamily(QSPTools::qspStrToQt(strVal));
+                    new_font.setFamily(QSPTools::qspStrToQt(QSP_STR(val)));
                     fontType = 1;
                 }
             }
         }
         if(!m_isUseFontSize)
         {
-            if(QSPGetVarValues(L"FSIZE"_qsp, 0, &numVal, &strVal))
+            if (QSPGetVarValue(L"FSIZE"_qsp, 0, &val))
             {
-                if(numVal != 0)
+                assert(QSP_ISNUM(val.Type));
+                if (QSP_NUM(val) != 0)
                 {
-                    new_font.setPointSize(numVal);
+                    new_font.setPointSize(QSP_NUM(val));
                     sizeType = 1;
                 }
             }
@@ -342,28 +346,24 @@ void MainWindow::ShowError()
 {
     bool oldIsProcessEvents;
     QString errorMessage;
-    QSPString loc;
-    int code, actIndex, line;
     if (m_isQuit) return;
-    QSPGetLastErrorData(&code, &loc, &actIndex, &line);
-    QString desc = QSPTools::qspStrToQt(QSPGetErrorDesc(code));
-    if (loc.Str)
+    QSPErrorInfo error = QSPGetLastErrorData();
+    QString desc = QSPTools::qspStrToQt(error.ErrorDesc);
+    if (error.LocName.Str)
         errorMessage = QString("Location: %1\nArea: %2\nLine: %3\nCode: %4\nDesc: %5")
-                .arg(QSPTools::qspStrToQt(loc))
-                .arg(actIndex < 0 ? QString("on visit") : QString("on action"))
-                .arg(line)
-                .arg(code)
-                .arg(desc);
+                           .arg(QSPTools::qspStrToQt(error.LocName))
+                           .arg(error.ActIndex < 0 ? QString("on visit") : QString("on action"))
+                           .arg(error.IntLineNum)
+                           .arg(error.ErrorNum)
+                           .arg(desc);
     else
-        errorMessage = QString("Code: %1\nDesc: %2")
-                .arg(code)
-                .arg(desc);
+        errorMessage = QString("Code: %1\nDesc: %2").arg(error.ErrorNum).arg(desc);
     QMessageBox dialog(QMessageBox::Critical, tr("Error"), errorMessage, QMessageBox::Ok, this);
     oldIsProcessEvents = m_isProcessEvents;
     m_isProcessEvents = false;
     dialog.exec();
     m_isProcessEvents = oldIsProcessEvents;
-    if (m_isGameOpened) QSPCallBacks::RefreshInt(QSP_FALSE);
+    if (m_isGameOpened) QSPCallBacks::RefreshInt(QSP_FALSE, QSP_FALSE);
 }
 
 QMenu* MainWindow::GetGameMenu() const
@@ -803,7 +803,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     setVisible(false);
     m_isQuit = true;
 
-    QSPDeInit();
+    QSPTerminate();
     QSPCallBacks::DeInit();
 
     QCoreApplication::processEvents();

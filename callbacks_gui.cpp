@@ -72,41 +72,41 @@ void QSPCallBacks::Init(MainWindow* frame, DebugLogWindow* debugLogWindow)
     m_isAllowHTML5Extras = false;
 
     /* void func(QSPString str) */
-    QSPSetCallBack(QSP_CALL_DEBUG, (QSP_CALLBACK)&Debug);
+    QSPSetCallback(QSP_CALL_DEBUG, (QSP_CALLBACK)&Debug);
     // QSP_CALL_ISPLAYINGFILE, /* QSP_BOOL func(QSPString file) */
-    QSPSetCallBack(QSP_CALL_ISPLAYINGFILE, (QSP_CALLBACK)&IsPlay);
+    QSPSetCallback(QSP_CALL_ISPLAYINGFILE, (QSP_CALLBACK)&IsPlay);
     // QSP_CALL_PLAYFILE,            /* void func(QSPString file, int volume) */
-    QSPSetCallBack(QSP_CALL_PLAYFILE, (QSP_CALLBACK)&PlayFile);
+    QSPSetCallback(QSP_CALL_PLAYFILE, (QSP_CALLBACK)&PlayFile);
     // QSP_CALL_CLOSEFILE,       /* void func(QSPString file) */
-    QSPSetCallBack(QSP_CALL_CLOSEFILE, (QSP_CALLBACK)&CloseFile);
+    QSPSetCallback(QSP_CALL_CLOSEFILE, (QSP_CALLBACK)&CloseFile);
     // QSP_CALL_SHOWIMAGE,       /* void func(QSPString file) */
-    QSPSetCallBack(QSP_CALL_SHOWIMAGE, (QSP_CALLBACK)&ShowImage);
+    QSPSetCallback(QSP_CALL_SHOWIMAGE, (QSP_CALLBACK)&ShowImage);
     // QSP_CALL_SHOWWINDOW,      /* void func(int type, QSP_BOOL toShow) */
-    QSPSetCallBack(QSP_CALL_SHOWWINDOW, (QSP_CALLBACK)&ShowPane);
+    QSPSetCallback(QSP_CALL_SHOWWINDOW, (QSP_CALLBACK)&ShowPane);
     // QSP_CALL_SHOWMENU,        /* int func(QSPListItem *items, int count) */
-    QSPSetCallBack(QSP_CALL_SHOWMENU, (QSP_CALLBACK)&ShowMenu);
+    QSPSetCallback(QSP_CALL_SHOWMENU, (QSP_CALLBACK)&ShowMenu);
     // QSP_CALL_SHOWMSGSTR,      /* void func(QSPString text) */
-    QSPSetCallBack(QSP_CALL_SHOWMSGSTR, (QSP_CALLBACK)&Msg);
+    QSPSetCallback(QSP_CALL_SHOWMSGSTR, (QSP_CALLBACK)&Msg);
     // QSP_CALL_REFRESHINT,      /* void func(QSP_BOOL isForced) */
-    QSPSetCallBack(QSP_CALL_REFRESHINT, (QSP_CALLBACK)&RefreshInt);
+    QSPSetCallback(QSP_CALL_REFRESHINT, (QSP_CALLBACK)&RefreshInt);
     // QSP_CALL_SETTIMER,        /* void func(int msecs) */
-    QSPSetCallBack(QSP_CALL_SETTIMER, (QSP_CALLBACK)&SetTimer);
+    QSPSetCallback(QSP_CALL_SETTIMER, (QSP_CALLBACK)&SetTimer);
     // QSP_CALL_SETINPUTSTRTEXT, /* void func(QSPString text) */
-    QSPSetCallBack(QSP_CALL_SETINPUTSTRTEXT, (QSP_CALLBACK)&SetInputStrText);
+    QSPSetCallback(QSP_CALL_SETINPUTSTRTEXT, (QSP_CALLBACK)&SetInputStrText);
     // QSP_CALL_SYSTEM,          /* void func(QSPString cmd) */
     // QSP_CALL_OPENGAME,        /* void func(QSP_BOOL isNewGame) */
-    QSPSetCallBack(QSP_CALL_OPENGAME, (QSP_CALLBACK)&OpenGame);
+    QSPSetCallback(QSP_CALL_OPENGAME, (QSP_CALLBACK)&OpenGame);
     // QSP_CALL_OPENGAMESTATUS,  /* void func(QSPString file) */
-    QSPSetCallBack(QSP_CALL_OPENGAMESTATUS, (QSP_CALLBACK)&OpenGameStatus);
+    QSPSetCallback(QSP_CALL_OPENGAMESTATUS, (QSP_CALLBACK)&OpenGameStatus);
     // QSP_CALL_SAVEGAMESTATUS,  /* void func(QSPString file) */
-    QSPSetCallBack(QSP_CALL_SAVEGAMESTATUS, (QSP_CALLBACK)&SaveGameStatus);
+    QSPSetCallback(QSP_CALL_SAVEGAMESTATUS, (QSP_CALLBACK)&SaveGameStatus);
     // QSP_CALL_SLEEP,           /* void func(int msecs) */
-    QSPSetCallBack(QSP_CALL_SLEEP, (QSP_CALLBACK)&Sleep);
+    QSPSetCallback(QSP_CALL_SLEEP, (QSP_CALLBACK)&Sleep);
     // QSP_CALL_GETMSCOUNT,      /* int func() */
-    QSPSetCallBack(QSP_CALL_GETMSCOUNT, (QSP_CALLBACK)&GetMSCount);
+    QSPSetCallback(QSP_CALL_GETMSCOUNT, (QSP_CALLBACK)&GetMSCount);
     // QSP_CALL_INPUTBOX, /* void func(QSPString text, QSP_CHAR *buffer, int
     // maxLen) */
-    QSPSetCallBack(QSP_CALL_INPUTBOX, (QSP_CALLBACK)&Input);
+    QSPSetCallback(QSP_CALL_INPUTBOX, (QSP_CALLBACK)&Input);
     // QSP_CALL_VERSION,  /* void func(QSPString param, QSP_CHAR *buffer, int
     // maxLen) */
 }
@@ -125,22 +125,20 @@ void QSPCallBacks::SetTimer(int msecs)
         m_frame->GetTimer()->stop();
 }
 
-void QSPCallBacks::RefreshInt(QSP_BOOL isRedraw)
+void QSPCallBacks::RefreshInt(QSP_BOOL isForced, QSP_BOOL isNewDesc)
 {
-	static int oldFullRefreshCount = 0;
-	int numVal;
-	bool isScroll, isCanSave;
-    QSPString strVal;
-	if (m_frame->IsQuit()) return;
+    QSPVariant val;
+    bool isScroll, isCanSave;
+    if (m_frame->IsQuit()) return;
     // -------------------------------
     UpdateGamePath(m_frame->gameFilePath());
     // -------------------------------
     const QSPString mainDesc = QSPGetMainDesc();
     const QSPString varsDesc = QSPGetVarsDesc();
     // -------------------------------
-    isScroll = !(QSPGetVarValues(L"DISABLESCROLL"_qsp, 0, &numVal, &strVal) && numVal);
-    isCanSave = !(QSPGetVarValues(L"NOSAVE"_qsp, 0, &numVal, &strVal) && numVal);
-    m_isHtml = QSPGetVarValues(L"USEHTML"_qsp, 0, &numVal, &strVal) && numVal;
+    isScroll = !(QSPGetVarValue(L"DISABLESCROLL"_qsp, 0, &val) && QSP_NUM(val));
+    isCanSave = !(QSPGetVarValue(L"NOSAVE"_qsp, 0, &val) && QSP_NUM(val));
+    m_isHtml = QSPGetVarValue(L"USEHTML"_qsp, 0, &val) && QSP_NUM(val);
     // -------------------------------
 	m_frame->GetVars()->SetIsHtml(m_isHtml);
 	if (QSPIsVarsDescChanged())
@@ -148,8 +146,8 @@ void QSPCallBacks::RefreshInt(QSP_BOOL isRedraw)
         m_frame->EnableControls(false, true);
         if(m_isAllowHTML5Extras)
         {
-            if (QSPGetVarValues(L"SETSTATHEAD"_qsp, 0, &numVal, &strVal) && strVal.Str)
-                m_frame->GetVars()->SetHead(QSPTools::qspStrToQt(strVal));
+            if (QSPGetVarValue(L"SETSTATHEAD"_qsp, 0, &val) && QSP_STR(val).Str)
+                m_frame->GetVars()->SetHead(QSPTools::qspStrToQt(QSP_STR(val)));
             else
                  m_frame->GetVars()->SetHead(QString(""));
         }
@@ -157,25 +155,20 @@ void QSPCallBacks::RefreshInt(QSP_BOOL isRedraw)
         m_frame->EnableControls(true, true);
 	}
 	// -------------------------------
-	int fullRefreshCount = QSPGetFullRefreshCount();
-	if (oldFullRefreshCount != fullRefreshCount)
-	{
-		isScroll = false;
-		oldFullRefreshCount = fullRefreshCount;
-	}
-	m_frame->GetDesc()->SetIsHtml(m_isHtml);
-    if (QSPIsMainDescChanged())
-    {
-        m_frame->EnableControls(false, true);
-        if(m_isAllowHTML5Extras)
+        isScroll = !isNewDesc;
+        m_frame->GetDesc()->SetIsHtml(m_isHtml);
+        if (QSPIsMainDescChanged())
         {
-            if (QSPGetVarValues(L"SETMAINDESCHEAD"_qsp, 0, &numVal, &strVal) && strVal.Str)
-                m_frame->GetDesc()->SetHead(QSPTools::qspStrToQt(strVal));
-            else
-                 m_frame->GetDesc()->SetHead(QString(""));
-        }
-        m_frame->GetDesc()->SetText(QSPTools::qspStrToQt(mainDesc), isScroll);
-        m_frame->EnableControls(true, true);
+            m_frame->EnableControls(false, true);
+            if (m_isAllowHTML5Extras)
+            {
+                if (QSPGetVarValue(L"SETMAINDESCHEAD"_qsp, 0, &val) && QSP_STR(val).Str)
+                    m_frame->GetDesc()->SetHead(QSPTools::qspStrToQt(QSP_STR(val)));
+                else
+                    m_frame->GetDesc()->SetHead(QString(""));
+            }
+            m_frame->GetDesc()->SetText(QSPTools::qspStrToQt(mainDesc), isScroll);
+            m_frame->EnableControls(true, true);
 	}
 	// -------------------------------
 	m_frame->GetActions()->SetIsHtml(m_isHtml);
@@ -202,22 +195,22 @@ void QSPCallBacks::RefreshInt(QSP_BOOL isRedraw)
         }
         m_frame->GetObjects()->EndItems();
     }
-	m_frame->GetObjects()->SetSelection(QSPGetSelObjectIndex());
-	// -------------------------------
-    if (QSPGetVarValues(L"BACKIMAGE"_qsp, 0, &numVal, &strVal) && strVal.Str)
-        m_frame->GetDesc()->LoadBackImage(QSPTools::GetCaseInsensitiveFilePath(m_gamePath, QSPTools::qspStrToQt(strVal)));
-	else
+    m_frame->GetObjects()->SetSelection(QSPGetSelObjectIndex());
+    // -------------------------------
+    if (QSPGetVarValue(L"BACKIMAGE"_qsp, 0, &val) && QSP_STR(val).Str)
+        m_frame->GetDesc()->LoadBackImage(QSPTools::GetCaseInsensitiveFilePath(m_gamePath, QSPTools::qspStrToQt(QSP_STR(val))));
+    else
         m_frame->GetDesc()->LoadBackImage(QString(""));
     // -------------------------------
     m_frame->ApplyParams();
-	if (isRedraw)
-	{
-		m_frame->EnableControls(false, true);
+    if (isForced)
+    {
+        m_frame->EnableControls(false, true);
         //m_frame->Update();
         //QCoreApplication::processEvents();
 		if (m_frame->IsQuit()) return;
 		m_frame->EnableControls(true, true);
-	}
+    }
     m_frame->GetGameMenu()->setEnabled(isCanSave);
 }
 
@@ -334,16 +327,10 @@ int QSPCallBacks::GetMSCount()
 void QSPCallBacks::Msg(QSPString str)
 {
 	if (m_frame->IsQuit()) return;
-	RefreshInt(QSP_FALSE);
-    QspMsgDlg dialog(m_frame->GetDesc()->GetBackgroundColor(),
-        m_frame->GetDesc()->GetForegroundColor(),
-		m_frame->GetDesc()->GetTextFont(),
-        MainWindow::tr("Info"), //caption
-        QSPTools::qspStrToQt(str),
-		m_isHtml,
-        m_gamePath,
-        m_frame
-	);
+        RefreshInt(QSP_FALSE, QSP_FALSE);
+        QspMsgDlg dialog(m_frame->GetDesc()->GetBackgroundColor(), m_frame->GetDesc()->GetForegroundColor(), m_frame->GetDesc()->GetTextFont(),
+                         MainWindow::tr("Info"), // caption
+                         QSPTools::qspStrToQt(str), m_isHtml, m_gamePath, m_frame);
 	m_frame->EnableControls(false);
     dialog.exec();
 	m_frame->EnableControls(true);
@@ -380,29 +367,29 @@ int QSPCallBacks::ShowMenu(const QSPListItem* items, int count)
 void QSPCallBacks::Input(QSPString text, QSP_CHAR *buffer, int maxLen)
 {
 	if (m_frame->IsQuit()) return;
-    RefreshInt(QSP_FALSE);
-//	QSPInputDlg dialog(m_frame,
-//		wxID_ANY,
-//		m_frame->GetDesc()->GetBackgroundColor(),
-//		m_frame->GetDesc()->GetForegroundColor(),
-//		m_frame->GetDesc()->GetTextFont(),
-//		_("Input data"),
-//		wxString(text.Str, text.End),
-//		m_isHtml,
-//		m_gamePath
-//	);
-//	m_frame->EnableControls(false);
-//	dialog.ShowModal();
-//	m_frame->EnableControls(true);
-    //#ifdef _UNICODE
-	// 	wcsncpy(buffer, inputText.data(), maxLen);
-	// #else
-	// 	strncpy(buffer, dialog.GetText().c_str(), maxLen);
-	// #endif
-    //QString inputText = QInputDialog::getMultiLineText(m_frame, MainWindow::tr("Input data"), QSPTools::qspStrToQt(text));
+        RefreshInt(QSP_FALSE, QSP_FALSE);
+        //	QSPInputDlg dialog(m_frame,
+        //		wxID_ANY,
+        //		m_frame->GetDesc()->GetBackgroundColor(),
+        //		m_frame->GetDesc()->GetForegroundColor(),
+        //		m_frame->GetDesc()->GetTextFont(),
+        //		_("Input data"),
+        //		wxString(text.Str, text.End),
+        //		m_isHtml,
+        //		m_gamePath
+        //	);
+        //	m_frame->EnableControls(false);
+        //	dialog.ShowModal();
+        //	m_frame->EnableControls(true);
+        // #ifdef _UNICODE
+        // 	wcsncpy(buffer, inputText.data(), maxLen);
+        // #else
+        // 	strncpy(buffer, dialog.GetText().c_str(), maxLen);
+        // #endif
+        // QString inputText = QInputDialog::getMultiLineText(m_frame, MainWindow::tr("Input data"), QSPTools::qspStrToQt(text));
 
-    QString inputText = QInputDialog::getText(m_frame, MainWindow::tr("Input data"), QSPTools::qspStrToQt(text), QLineEdit::Normal);
-    QSPTools::qtStrToQspBuffer(inputText, buffer, maxLen);
+        QString inputText = QInputDialog::getText(m_frame, MainWindow::tr("Input data"), QSPTools::qspStrToQt(text), QLineEdit::Normal);
+        QSPTools::qtStrToQspBuffer(inputText, buffer, maxLen);
 }
 
 void QSPCallBacks::ShowImage(QSPString file)

@@ -21,22 +21,18 @@ void QspWebChannel::ExecString(const QString &string)
 void QspWebChannel::ShowError()
 {
     QString errorMessage;
-    QSPString loc;
-    int code, actIndex, line;
-    QSPGetLastErrorData(&code, &loc, &actIndex, &line);
-    QString desc = QSPTools::qspStrToQt(QSPGetErrorDesc(code));
-    if (loc.Str)
+    const QSPErrorInfo errorInfo{QSPGetLastErrorData()};
+    QString desc = QSPTools::qspStrToQt(errorInfo.ErrorDesc);
+    if (errorInfo.LocName.Str)
         errorMessage = QString("Location: %1\nArea: %2\nLine: %3\nCode: %4\nDesc: %5")
-                .arg(QSPTools::qspStrToQt(loc))
-                .arg(actIndex < 0 ? QString("on visit") : QString("on action"))
-                .arg(line)
-                .arg(code)
-                .arg(desc);
+                           .arg(QSPTools::qspStrToQt(errorInfo.LocName))
+                           .arg(errorInfo.ActIndex < 0 ? QString("on visit") : QString("on action"))
+                           .arg(errorInfo.IntLineNum)
+                           .arg(errorInfo.ErrorNum)
+                           .arg(desc);
     else
-        errorMessage = QString("Code: %1\nDesc: %2")
-                .arg(code)
-                .arg(desc);
+        errorMessage = QString("Code: %1\nDesc: %2").arg(errorInfo.ErrorNum).arg(desc);
     QMessageBox dialog(QMessageBox::Critical, tr("Error"), errorMessage, QMessageBox::Ok);
     dialog.exec();
-    QSPCallBacks::RefreshInt(QSP_FALSE);
+    QSPCallBacks::RefreshInt(QSP_FALSE, QSP_TRUE);
 }

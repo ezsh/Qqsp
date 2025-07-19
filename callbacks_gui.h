@@ -59,7 +59,7 @@ public:
     static void SetAllowHTML5Extras(bool HTML5Extras);
 
     // CallBacks
-    static void RefreshInt(QSP_BOOL isRedraw);
+    static void RefreshInt(QSP_BOOL isForced, QSP_BOOL isNewDesc);
     static void SetTimer(int msecs);
     static void SetInputStrText(QSPString text);
     static QSP_BOOL IsPlay(QSPString file);
