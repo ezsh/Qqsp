@@ -1,0 +1,50 @@
+linux-gcc:
+  stage: build
+  image: archlinux:latest
+  before_script:
+    - pacman -Suy --needed --noconfirm binutils boost cmake gcc git ninja oniguruma pkgconf qt6-base qt6-tools qt6-multimedia qt6-webengine
+    - cmake --version
+    - pwd
+    - mkdir 3rd-party
+    - ls
+    - git clone https://github.com/QSPFoundation/qsp.git 3rd-party/qsp
+  script:
+    - mkdir build && cd build
+    - mkdir qsp && cd qsp
+    - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DUSE_INSTALLED_ONIGURUMA:BOOL=ON ../../3rd-party/qsp
+    - cmake --build .
+    - ls
+    - cd ..
+    - mkdir Qqsp && cd Qqsp
+    - ls $CI_PROJECT_DIR/build/qsp
+    - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DQsp_DIR=$CI_PROJECT_DIR/build/qsp ../..
+    - cmake --build .
+
+windows:
+  stage: build
+  tags:
+    - saas-windows-medium-amd64
+  before_script:
+    - choco feature enable -n allowGlobalConfirmation
+    - "& \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x64"
+    - 'dir env:'
+    - choco install Ninja
+    - choco upgrade CMake
+    - cmake --version
+    - pwd
+    - mkdir 3rd-party
+    - git clone https://github.com/QSPFoundation/qsp.git 3rd-party/qsp
+  script:
+    - mkdir build
+    - cd build
+    - mkdir qsp
+    - cd qsp
+    - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DUSE_INSTALLED_ONIGURUMA:BOOL=ON ../../3rd-party/qsp
+    - cmake --build .
+    - ls
+    - cd ..
+    - mkdir Qqsp
+    - cd Qqsp
+    - ls $CI_PROJECT_DIR/build/qsp
+    - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DQsp_DIR=$CI_PROJECT_DIR/build/qsp ../..
+    - cmake --build .
