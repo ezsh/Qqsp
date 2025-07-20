@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.30 FATAL_ERROR)
 
-project(qqsp VERSION 1.9.0)
+project(qqsp VERSION 1.10.0)
 include(FeatureSummary)
 include(GNUInstallDirs)
+include(CPack)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
