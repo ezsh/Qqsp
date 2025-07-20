@@ -2,7 +2,9 @@
 #define QQSP_QSPSTR_H
 
 #include <qsp_default.h>
+
 #include <QString>
+
 #include <string>
 
 class QSPStr {

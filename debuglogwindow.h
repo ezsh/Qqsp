@@ -3,29 +3,27 @@
 
 #include <QMainWindow>
 
-namespace Ui
-{
-class DebugLogWindow;
+namespace Ui {
+	class DebugLogWindow;
 }
 
-class DebugLogWindow : public QMainWindow
-{
-    using base = QMainWindow;
+class DebugLogWindow: public QMainWindow {
+	using base = QMainWindow;
 
 public:
-    DebugLogWindow(QAction* toggleVisibilityAction, QWidget* parent = nullptr);
-    ~DebugLogWindow();
+	DebugLogWindow(QAction* toggleVisibilityAction, QWidget* parent = nullptr);
+	~DebugLogWindow();
 
-    void appendLine(QString line);
+	void appendLine(QString line);
 
-    // QWidget interface
-    void setVisible(bool visible) override;
+	// QWidget interface
+	void setVisible(bool visible) override;
 
 private:
-    void copyAllToClipboard();
+	void copyAllToClipboard();
 
-    Ui::DebugLogWindow* _ui;
-    QAction* _toggleVisibilityAction;
+	Ui::DebugLogWindow* _ui;
+	QAction* _toggleVisibilityAction;
 };
 
 #endif

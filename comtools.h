@@ -1,40 +1,39 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
-#include <QString>
+#include <qsp_default.h>
+
 #include <QColor>
 #include <QHash>
-#include <QColor>
-#include <qsp_default.h>
+#include <QString>
 
 #include <vector>
 
-class QSPTools
-{
+class QSPTools {
 public:
-    static QString GetHexColor(const QColor color);
-    static QString HtmlizeWhitespaces(const QString& str);
-    static QString ProceedAsPlain(const QString& str);
-    static QString GetAppPath();
-    static QString GetCaseInsensitiveFilePath(QString searchDir, QString originalPath);
-    static QString GetCaseInsensitiveAbsoluteFilePath(QString searchDir, QString originalPath);
-    static QString qspStrToQt(const QSPString& str);
-    static void qtStrToQspBuffer(const QString& str, QSP_CHAR* buffer, int bufLen);
-    static QColor wxtoQColor(int wxColor);
+	static QString GetHexColor(const QColor color);
+	static QString HtmlizeWhitespaces(const QString& str);
+	static QString ProceedAsPlain(const QString& str);
+	static QString GetAppPath();
+	static QString GetCaseInsensitiveFilePath(QString searchDir, QString originalPath);
+	static QString GetCaseInsensitiveAbsoluteFilePath(QString searchDir, QString originalPath);
+	static QString qspStrToQt(const QSPString& str);
+	static void qtStrToQspBuffer(const QString& str, QSP_CHAR* buffer, int bufLen);
+	static QColor wxtoQColor(int wxColor);
 
-    static std::vector<QSPListItem> qspActions();
-    static std::vector<QSPListItem> qspObjects();
+	static std::vector<QSPListItem> qspActions();
+	static std::vector<QSPListItem> qspObjects();
 
-    static bool loadGameFile(QString path);
+	static bool loadGameFile(QString path);
 
-    static bool useCaseInsensitiveFilePath;
+	static bool useCaseInsensitiveFilePath;
+
 private:
-    static QHash<QString, QString> file_list;
-    static QString file_path;
+	static QHash<QString, QString> file_list;
+	static QString file_path;
 };
 
-
-constexpr QSPString operator ""_qsp(const QSP_CHAR* str, std::size_t size)
+constexpr QSPString operator""_qsp(const QSP_CHAR* str, std::size_t size)
 {
 	return {const_cast<QSP_CHAR*>(str), const_cast<QSP_CHAR*>(str) + size};
 }

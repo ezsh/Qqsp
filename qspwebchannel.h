@@ -3,14 +3,14 @@
 
 #include <QObject>
 
-class QspWebChannel : public QObject
-{
-    Q_OBJECT
+class QspWebChannel: public QObject {
+	Q_OBJECT
 public:
-    explicit QspWebChannel(QObject *parent = nullptr);
-    Q_INVOKABLE void ExecString(const QString &string);
+	explicit QspWebChannel(QObject* parent = nullptr);
+	Q_INVOKABLE void ExecString(const QString& string);
+
 private:
-    void ShowError();
+	void ShowError();
 };
 
 #endif // QSPWEBCHANNEL_H

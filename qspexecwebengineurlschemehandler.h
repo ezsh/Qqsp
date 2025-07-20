@@ -6,23 +6,22 @@
 #include <QWebEngineUrlRequestJob>
 #include <QWebEngineUrlSchemeHandler>
 
-class QspExecWebEngineUrlSchemeHandler : public QWebEngineUrlSchemeHandler
-{
-    Q_OBJECT
+class QspExecWebEngineUrlSchemeHandler: public QWebEngineUrlSchemeHandler {
+	Q_OBJECT
 
 public:
-    explicit QspExecWebEngineUrlSchemeHandler(QObject *parent = 0);
-    void requestStarted(QWebEngineUrlRequestJob *request);
+	explicit QspExecWebEngineUrlSchemeHandler(QObject* parent = 0);
+	void requestStarted(QWebEngineUrlRequestJob* request);
 
 signals:
-    void qspLinkClicked(QUrl url);
+	void qspLinkClicked(QUrl url);
 
 public slots:
-    void QspLinkClicked();
+	void QspLinkClicked();
 
 private:
-    void legacyLinkClicked(QWebEngineUrlRequestJob *request);
-    QUrl url;
+	void legacyLinkClicked(QWebEngineUrlRequestJob* request);
+	QUrl url;
 };
 
 #endif // QSPEXECWEBENGINEURLSCHEMEHANDLER_H
