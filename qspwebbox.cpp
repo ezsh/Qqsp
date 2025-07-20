@@ -45,6 +45,7 @@ QspWebBox::QspWebBox(QWidget* parent)
 	newpage->settings()->setUnknownUrlSchemePolicy(QWebEngineSettings::AllowAllUnknownUrlSchemes);
 	page()->deleteLater();
 	setPage(newpage);
+	Q_EMIT pageChanged();
 	connect(&qeweush, &QspExecWebEngineUrlSchemeHandler::qspLinkClicked, this, &QspWebBox::OnQspLinkClicked);
 	QEventLoop loop;
 	connect(page(), &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
@@ -141,6 +142,7 @@ void QspWebBox::RefreshUI(bool isScroll)
 		newpage->settings()->setAttribute(QWebEngineSettings::PlaybackRequiresUserGesture, false);
 		newpage->settings()->setUnknownUrlSchemePolicy(QWebEngineSettings::AllowAllUnknownUrlSchemes);
 		setPage(newpage);
+		Q_EMIT pageChanged();
 		QEventLoop loop;
 		connect(page(), &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
 		page()->load(QUrl("qsp:/"));
@@ -293,6 +295,7 @@ void QspWebBox::Quit()
 	page()->deleteLater();
 	QWebEnginePage* newpage = new QWebEnginePage(this);
 	setPage(newpage);
+	Q_EMIT pageChanged();
 	QEventLoop loop;
 	connect(page(), &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
 	page()->load(QUrl("about:blank"));

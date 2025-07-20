@@ -105,5 +105,4 @@ SpacesInLineCommentPrefix:
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 Standard: Latest
-
-StatementMacros: ['Q_EMIT', 'Q_UNUSED', 'Q_OBJECT']
+StatementMacros: ['Q_UNUSED', 'Q_OBJECT']

@@ -5,6 +5,8 @@
 #include "debuglogwindow.h"
 #include "optionsdialog.h"
 #include "qspstr.h"
+#include "webinspector.h"
+#include "webinspectorwindow.h"
 
 #include <QApplication>
 #include <QAudioOutput>
@@ -49,10 +51,12 @@ MainWindow::MainWindow(QWidget* parent)
 	setAcceptDrops(true);
 
 #ifdef QT_WEBENGINEWIDGETS_LIB
-//    qwuri = new QspWebEngineUrlRequestInterceptor();
-//    QWebEngineProfile::defaultProfile()->setRequestInterceptor(qwuri);
-//    QspWebEngineUrlSchemeHandler *qweush = new QspWebEngineUrlSchemeHandler();
-//    QWebEngineProfile::defaultProfile()->installUrlSchemeHandler(QByteArray("qsp"),qweush);
+	//    qwuri = new QspWebEngineUrlRequestInterceptor();
+	//    QWebEngineProfile::defaultProfile()->setRequestInterceptor(qwuri);
+	//    QspWebEngineUrlSchemeHandler *qweush = new QspWebEngineUrlSchemeHandler();
+	//    QWebEngineProfile::defaultProfile()->installUrlSchemeHandler(QByteArray("qsp"),qweush);
+#else
+	_ui->actionWebInspector->setVisible(false);
 #endif
 
 	m_palette = palette();
@@ -684,6 +688,8 @@ void MainWindow::CreateMenuBar()
 	//  Help menu
 	//  About item
 	connect(_ui->actionAbout, &QAction::triggered, this, &ThisType::OnAbout);
+
+	connect(_ui->actionWebInspector, &QAction::toggled, this, &ThisType::OnWebInspector);
 }
 
 void MainWindow::CreateDockWindows()
@@ -772,6 +778,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	_descTextBox->Quit();
 	// delete _mainDescTextBox;
 	// delete _descTextBox;
+	delete _inspector;
+	_inspector = nullptr;
 #endif
 	if (!m_configPath.isEmpty()) {
 		SaveSettings(m_configPath);
@@ -1338,4 +1346,16 @@ void MainWindow::OnInputTextEnter()
 	if (!QSPExecUserInput(QSP_TRUE)) {
 		ShowError();
 	}
+}
+
+void MainWindow::OnWebInspector(bool checked)
+{
+#ifdef QT_WEBENGINEWIDGETS_LIB
+	if (checked) {
+		_inspector = new WebInspectorWindow(this);
+		_inspector->setViews(_mainDescTextBox, _descTextBox);
+		_inspector->show();
+		connect(_inspector, &QObject::destroyed, this, [this]() { _ui->actionWebInspector->setChecked(false); });
+	}
+#endif
 }

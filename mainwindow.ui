@@ -55,6 +55,7 @@
      </property>
      <addaction name="actionCaptions"/>
      <addaction name="actionDebug_log"/>
+     <addaction name="actionWebInspector"/>
      <addaction name="actionHotkeys_for_actions"/>
     </widget>
     <addaction name="_showHideMenu"/>
@@ -282,6 +283,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+8</string>
+   </property>
+  </action>
+  <action name="actionWebInspector">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Web Inspector</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+I</string>
    </property>
   </action>
   <zorder>objectsWidget</zorder>

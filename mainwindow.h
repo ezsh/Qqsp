@@ -41,6 +41,7 @@
 #define QSP_GAME          "game.qsp"
 
 class DebugLogWindow;
+class WebInspectorWindow;
 
 namespace Ui {
 	class MainWindow;
@@ -229,6 +230,7 @@ private:
 #else
 	QspWebBox* _mainDescTextBox; // m_desc
 	QspWebBox* _descTextBox; // m_vars ID_VARSDESC
+	WebInspectorWindow* _inspector{};
 #endif
 	QspListBox* _objectsListBox; // m_objects
 	QspListBox* _actionsListBox; // m_actions
@@ -315,6 +317,7 @@ private slots:
 	void OnMenu(QAction* action);
 	void OnInputTextChange();
 	void OnInputTextEnter();
+	void OnWebInspector(bool checked);
 };
 
 #endif // MAINWINDOW_H

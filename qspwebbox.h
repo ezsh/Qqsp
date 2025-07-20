@@ -81,8 +81,9 @@ private:
 	QspWebChannel qspJS;
 	bool m_isQuit;
 
-signals:
+Q_SIGNALS:
 	void qspLinkClicked(QUrl url);
+	void pageChanged();
 
 private slots:
 	void OnQspLinkClicked(QUrl url);

@@ -71,6 +71,11 @@ if(Qt6WebEngineWidgets_FOUND)
 		qspexecwebengineurlschemehandler.h
 		url_schemes.h
 		qspwebchannel.h
+		webinspector.h
+		webinspector.cpp
+		webinspectorwindow.h
+		webinspectorwindow.cpp
+		webinspectorwindow.ui
 	)
 
 	target_link_libraries(Qqsp PRIVATE Qt::WebEngineCore Qt::WebEngineWidgets)
