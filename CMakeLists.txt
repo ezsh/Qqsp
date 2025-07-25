@@ -8,20 +8,26 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_SCAN_FOR_MODULES off)
 
-find_package(Qt6 6.7 COMPONENTS LinguistTools WebEngineCore WebEngineWidgets)
-find_package(Qt6 6.7 REQUIRED COMPONENTS Core Gui Multimedia MultimediaWidgets Widgets)
+set(MINIMAL_QT_VERSION 6.7)
+
+find_package(Qt6 ${MINIMAL_QT_VERSION} COMPONENTS LinguistTools WebEngineCore WebEngineWidgets)
+find_package(Qt6 ${MINIMAL_QT_VERSION} REQUIRED COMPONENTS Core Gui Multimedia MultimediaWidgets Widgets)
 find_package(Qsp REQUIRED)
+if (WIN32)
+	find_package(Oniguruma REQUIRED) # to install the library
+endif()
 
 option(NO_NATIVE_DIALOGS "Do not use native file open/sav dialogs" OFF)
 configure_file(qqsp-config.h.cmakein qqsp-config.h @ONLY)
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+qt_standard_project_setup(
+	REQUIRES ${MINIMAL_QT_VERSION}
+	I18N_TRANSLATED_LANGUAGES ru uk
+)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-add_executable(Qqsp)
+qt_add_executable(Qqsp WIN32)
 target_sources(Qqsp PRIVATE
 	debuglogwindow.h debuglogwindow.cpp
 	main.cpp
@@ -54,6 +60,10 @@ target_sources(Qqsp PRIVATE
 	optionsdialog.ui
 	qqsp.qrc
 )
+
+if (WIN32)
+	target_sources(Qqsp PRIVATE Qqsp.rc)
+endif()
 
 target_link_libraries(Qqsp PRIVATE Qsp::qsp Qt::Multimedia Qt::MultimediaWidgets Qt::Widgets)
 
@@ -89,10 +99,57 @@ if (Qt6LinguistTools_FOUND)
 	)
 endif()
 
+# On Windows we usually do not have system-wide Qt install, let's make the built
+# binaries able to find Qt
+if (WIN32)
+	# let's find out where Qt is installed
+	get_target_property(_qtpaths_executable Qt::qtpaths LOCATION)
+	execute_process(COMMAND "${_qtpaths_executable}" "--query"
+		OUTPUT_VARIABLE qt_paths
+	)
+    string(REGEX MATCH "QT_INSTALL_PREFIX:([^\n]+)" _qt_install_prefix "${qt_paths}")
+	string(REGEX MATCH "QT_INSTALL_PLUGINS:([^\n]+)" _qt_install_plugins "${qt_paths}")
+	string(REPLACE "QT_INSTALL_PREFIX:" "" QT_INSTALL_PREFIX "${_qt_install_prefix}")
+	string(REPLACE "QT_INSTALL_PLUGINS:" "" QT_INSTALL_PLUGINS "${_qt_install_plugins}")
+
+	# Windows 8.1
+	add_compile_definitions(WINVER=0x0603 _WIN32_WINNT=0x0603)
+
+	# get Qt installation prefix
+	cmake_path(RELATIVE_PATH QT_INSTALL_PLUGINS BASE_DIRECTORY "${QT_INSTALL_PREFIX}"  OUTPUT_VARIABLE QT_PLUGINS_SUBDIR)
+	configure_file(cmake/qt.conf.cmakein "${CMAKE_CURRENT_BINARY_DIR}/qt.conf" @ONLY)
+
+	target_link_libraries(Qqsp PRIVATE oniguruma::onig)
+	add_custom_command(TARGET Qqsp POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:Qqsp> "${CMAKE_CURRENT_BINARY_DIR}/qt.conf" $<TARGET_FILE_DIR:Qqsp>
+		COMMAND_EXPAND_LISTS
+	)
+endif()
+
 install(TARGETS Qqsp DESTINATION "${CMAKE_INSTALL_BINDIR}")
 if (LINUX)
 	install(FILES Qqsp.desktop DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications")
 	install(FILES qsp.mime DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages" RENAME qsp.xml)
+else()
+	if(APPLE)
+		set(executable_path "$<TARGET_FILE_NAME:Qqsp>.app")
+	else()
+		set(executable_path "\${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:Qqsp>")
+	endif()
+
+	install(IMPORTED_RUNTIME_ARTIFACTS Qsp::qsp DESTINATION "${CMAKE_INSTALL_BINDIR}")
+	install(IMPORTED_RUNTIME_ARTIFACTS oniguruma::onig DESTINATION "${CMAKE_INSTALL_BINDIR}")
+	qt_generate_deploy_script(
+		TARGET Qqsp
+		OUTPUT_SCRIPT qt_deploy_script
+		CONTENT "
+	qt_deploy_runtime_dependencies(
+		EXECUTABLE \"${executable_path}\"
+		GENERATE_QT_CONF
+		VERBOSE
+	)")
+
+    install(SCRIPT ${qt_deploy_script})
 endif()
 
 feature_summary(FATAL_ON_MISSING_REQUIRED_PACKAGES WHAT ALL)
