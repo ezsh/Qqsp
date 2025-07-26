@@ -14,6 +14,8 @@
 #	include "url_schemes.h"
 #endif
 
+#include "qqsp-config.h"
+
 int main(int argc, char* argv[])
 {
 	QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
@@ -25,7 +27,7 @@ int main(int argc, char* argv[])
 	QApplication a(argc, argv);
 	a.setApplicationName("Qqsp");
 	a.setOrganizationName("Qqsp");
-	a.setApplicationVersion("1.8");
+	a.setApplicationVersion(VERSION_STRING);
 
 	QObject::tr("__LANGNAME__");
 	QObject::tr("__LANGID__");
