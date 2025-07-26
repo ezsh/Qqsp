@@ -20,10 +20,10 @@ WebInspectorWindow::~WebInspectorWindow()
 	delete _ui;
 }
 
-void WebInspectorWindow::setViews(QspWebBox* mainView, QspWebBox* descView)
+void WebInspectorWindow::setViews(QspWebBox* mainDescView, QspWebBox* additionalDescView)
 {
-	_ui->tabMain->setView(mainView);
-	_ui->tabDesc->setView(descView);
+	_ui->tabMainDesc->setView(mainDescView);
+	_ui->tabAdditionalDesc->setView(additionalDescView);
 }
 
 void WebInspectorWindow::loadSettings()

@@ -14,7 +14,7 @@ public:
 	explicit WebInspectorWindow(QWidget* parent);
 	~WebInspectorWindow() override;
 
-	void setViews(QspWebBox* mainView, QspWebBox* descView);
+	void setViews(QspWebBox* mainDescView, QspWebBox* additionalDescView);
 
 private:
 	void loadSettings();

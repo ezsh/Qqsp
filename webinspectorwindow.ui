@@ -20,14 +20,14 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="WebInspector" name="tabMain">
+      <widget class="WebInspector" name="tabMainDesc">
        <attribute name="title">
         <string>Main</string>
        </attribute>
       </widget>
-      <widget class="WebInspector" name="tabDesc">
+      <widget class="WebInspector" name="tabAdditionalDesc">
        <attribute name="title">
-        <string>Desc</string>
+        <string>Additional</string>
        </attribute>
       </widget>
      </widget>
