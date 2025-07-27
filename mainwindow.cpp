@@ -1355,7 +1355,10 @@ void MainWindow::OnWebInspector(bool checked)
 		_inspector = new WebInspectorWindow(this);
 		_inspector->setViews(_mainDescTextBox, _descTextBox);
 		_inspector->show();
-		connect(_inspector, &QObject::destroyed, this, [this]() { _ui->actionWebInspector->setChecked(false); });
+		connect(_inspector, &QObject::destroyed, this, [this]() {
+			_inspector = nullptr;
+			_ui->actionWebInspector->setChecked(false);
+		});
 	}
 #endif
 }
