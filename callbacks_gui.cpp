@@ -7,6 +7,7 @@
 #include <QAudioOutput>
 #include <QByteArray>
 #include <QCoreApplication>
+#include <QDockWidget>
 #include <QElapsedTimer>
 #include <QEventLoop>
 #include <QFile>

@@ -42,13 +42,8 @@ MainWindow::MainWindow(QWidget* parent)
 	_ui->setupUi(this);
 
 	resize(600, 450);
-	setMinimumSize(240, 180);
 	setWindowTitle(QSP_LOGO);
-	setUnifiedTitleAndToolBarOnMac(true);
-	setDockNestingEnabled(true);
-	setFocusPolicy(Qt::StrongFocus);
 	setObjectName(QStringLiteral("MainWindow"));
-	setAcceptDrops(true);
 
 #ifdef QT_WEBENGINEWIDGETS_LIB
 	//    qwuri = new QspWebEngineUrlRequestInterceptor();
@@ -121,7 +116,7 @@ MainWindow::MainWindow(QWidget* parent)
 		langid = QLocale::system().name();
 	}
 
-	CreateDockWindows();
+	setupDockWindows();
 
 	_debugLogWindow = new DebugLogWindow(_ui->actionDebug_log, this);
 
@@ -348,6 +343,31 @@ void MainWindow::ShowError()
 	if (m_isGameOpened) {
 		QSPCallBacks::RefreshInt(QSP_FALSE, QSP_FALSE);
 	}
+}
+
+QDockWidget* MainWindow::GetVarsDock() const
+{
+	return _ui->dockWidgetAdditional;
+}
+
+QDockWidget* MainWindow::GetInputDock() const
+{
+	return _ui->dockWidgetInput;
+}
+
+QDockWidget* MainWindow::GetActionsDock() const
+{
+	return _ui->dockWidgetActions;
+}
+
+QDockWidget* MainWindow::GetObjectsDock() const
+{
+	return _ui->dockWidgetObjects;
+}
+
+QDockWidget* MainWindow::GetImageDock() const
+{
+	return _ui->dockWidgetImage;
 }
 
 QMenu* MainWindow::GetGameMenu() const
@@ -618,37 +638,37 @@ void MainWindow::CreateMenuBar()
 	QAction* action;
 	QAction* before = _ui->_showHideMenu->insertSeparator(_ui->actionCaptions);
 
-	action = _objectsWidget->toggleViewAction();
+	action = GetObjectsDock()->toggleViewAction();
 	action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
 	_ui->_showHideMenu->insertAction(before, action);
 
 	// Actions item
-	action = _actionsWidget->toggleViewAction();
+	action = GetActionsDock()->toggleViewAction();
 	action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_2));
 	_ui->_showHideMenu->insertAction(before, action);
 
 	// Additional desc item
-	action = _descWidget->toggleViewAction();
+	action = GetVarsDock()->toggleViewAction();
 	action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_3));
 	_ui->_showHideMenu->insertAction(before, action);
 
 	// Input area item
-	action = _inputWidget->toggleViewAction();
+	action = GetInputDock()->toggleViewAction();
 	action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_4));
 	_ui->_showHideMenu->insertAction(before, action);
 
 	// Main desc item
-	action = _mainDescWidget->toggleViewAction();
+	action = _ui->dockWidgetMainDesc->toggleViewAction();
 	action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_5));
 	_ui->_showHideMenu->insertAction(before, action);
 
 	// Image item
-	action = _imgViewWidget->toggleViewAction();
+	action = GetImageDock()->toggleViewAction();
 	action->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_6));
 	_ui->_showHideMenu->insertAction(before, action);
 
 	// Captions item
-	_ui->actionCaptions->setChecked(_objectsWidget->titleBarWidget() == 0);
+	_ui->actionCaptions->setChecked(GetObjectsDock()->titleBarWidget() == nullptr);
 	connect(_ui->actionCaptions, &QAction::triggered, this, &ThisType::OnToggleCaptions);
 
 	// ToolBar
@@ -692,7 +712,7 @@ void MainWindow::CreateMenuBar()
 	connect(_ui->actionWebInspector, &QAction::toggled, this, &ThisType::OnWebInspector);
 }
 
-void MainWindow::CreateDockWindows()
+void MainWindow::setupDockWindows()
 {
 	// "Main desc" widget
 #ifndef QT_WEBENGINEWIDGETS_LIB
@@ -703,27 +723,18 @@ void MainWindow::CreateDockWindows()
 	connect(_mainDescTextBox, &QspWebBox::qspLinkClicked, this, &MainWindow::OnLinkClicked);
 #endif
 	_mainDescTextBox->setObjectName(QStringLiteral("_mainDescTextBox"));
-	_mainDescWidget = new QDockWidget(tr("Main desc"), this);
-	_mainDescWidget->setObjectName(QStringLiteral("_mainDescWidget"));
-	addDockWidget(Qt::TopDockWidgetArea, _mainDescWidget, Qt::Vertical);
-	_mainDescWidget->setWidget(_mainDescTextBox);
+	_ui->dockWidgetMainDesc->setWidget(_mainDescTextBox);
 
 	// "Objects" widget
-	_objectsWidget = new QDockWidget(tr("Objects"), this->centralWidget());
-	_objectsWidget->setObjectName(QStringLiteral("_objectsWidget"));
-	addDockWidget(Qt::RightDockWidgetArea, _objectsWidget, Qt::Vertical);
 	_objectsListBox = new QspListBox(this->centralWidget());
 	_objectsListBox->setObjectName(QStringLiteral("_objectsListBox"));
 	connect(_objectsListBox, &QspListBox::itemClicked, this, &MainWindow::OnObjectListBoxItemClicked);
 	// connect(_objectsListBox, &QspListBox::itemPressed, this, &MainWindow::OnObjectListBoxItemClicked);
 	connect(_objectsListBox, &QspListBox::itemDoubleClicked, this, &MainWindow::OnObjectListBoxItemClicked);
 	// connect(_objectsListBox, &QspListBox::currentRowChanged, this, &MainWindow::OnObjectChange);
-	_objectsWidget->setWidget(_objectsListBox);
+	GetObjectsDock()->setWidget(_objectsListBox);
 
 	// "Actions" widget
-	_actionsWidget = new QDockWidget(tr("Actions"), this->centralWidget());
-	_actionsWidget->setObjectName(QStringLiteral("_actionsWidget"));
-	addDockWidget(Qt::BottomDockWidgetArea, _actionsWidget, Qt::Vertical);
 	_actionsListBox = new QspListBox(this->centralWidget());
 	_actionsListBox->setObjectName(QStringLiteral("_actionsListBox"));
 	connect(_actionsListBox, &QspListBox::itemClicked, this, &MainWindow::OnActionsListBoxItemClicked);
@@ -731,12 +742,9 @@ void MainWindow::CreateDockWindows()
 	connect(_actionsListBox, &QspListBox::itemDoubleClicked, this, &MainWindow::OnActionsListBoxItemClicked);
 	connect(_actionsListBox, &QspListBox::SelectionChange, this, &MainWindow::OnActionChange);
 	_actionsListBox->SetMouseTracking(true);
-	_actionsWidget->setWidget(_actionsListBox);
+	GetActionsDock()->setWidget(_actionsListBox);
 
 	// "Additional desc" widget
-	_descWidget = new QDockWidget(tr("Additional desc"), this->centralWidget());
-	_descWidget->setObjectName(QStringLiteral("_descWidget"));
-	addDockWidget(Qt::BottomDockWidgetArea, _descWidget, Qt::Horizontal);
 #ifndef QT_WEBENGINEWIDGETS_LIB
 	_descTextBox = new QspTextBox(this->centralWidget());
 	connect(_descTextBox, SIGNAL(anchorClicked(QUrl)), this, SLOT(OnLinkClicked(QUrl)));
@@ -745,27 +753,21 @@ void MainWindow::CreateDockWindows()
 	connect(_descTextBox, &QspWebBox::qspLinkClicked, this, &MainWindow::OnLinkClicked);
 #endif
 	_descTextBox->setObjectName(QStringLiteral("_descTextBox"));
-	_descWidget->setWidget(_descTextBox);
+	_ui->dockWidgetAdditional->setWidget(_descTextBox);
 
 	// "Input area" widget
-	_inputWidget = new QDockWidget(tr("Input area"), this->centralWidget());
-	_inputWidget->setObjectName(QLatin1String("_inputWidget"));
-	addDockWidget(Qt::BottomDockWidgetArea, _inputWidget, Qt::Vertical);
 	_inputTextBox = new QspInputBox(this->centralWidget());
 	_inputTextBox->setObjectName(QLatin1String("_inputTextBox"));
-	_inputWidget->setWidget(_inputTextBox);
+	_ui->dockWidgetInput->setWidget(_inputTextBox);
 	connect(_inputTextBox, &QPlainTextEdit::textChanged, this, &MainWindow::OnInputTextChange);
 	connect(_inputTextBox, &QspInputBox::InputTextEnter, this, &MainWindow::OnInputTextEnter);
 
 	m_imgView = new QspImgCanvas(this->centralWidget());
 	m_imgView->setObjectName(QLatin1String("m_imgView"));
-	_imgViewWidget = new QDockWidget(tr("Image"), this->centralWidget());
-	_imgViewWidget->setObjectName(QLatin1String("_imgViewWidget"));
-	_imgViewWidget->setWidget(m_imgView);
-	addDockWidget(Qt::BottomDockWidgetArea, _imgViewWidget, Qt::Vertical);
+	_ui->dockWidgetImage->setWidget(m_imgView);
 
-	splitDockWidget(_actionsWidget, _inputWidget, Qt::Vertical);
-	splitDockWidget(_mainDescWidget, _objectsWidget, Qt::Horizontal);
+	splitDockWidget(_ui->dockWidgetActions, _ui->dockWidgetInput, Qt::Vertical);
+	splitDockWidget(_ui->dockWidgetMainDesc, _ui->dockWidgetObjects, Qt::Horizontal);
 
 	setCentralWidget(nullptr);
 	setDockNestingEnabled(true);
@@ -1175,44 +1177,34 @@ void MainWindow::OnAbout()
 void MainWindow::OnToggleCaptions(bool checked)
 {
 	showCaptions = checked;
-	QWidget* mainTitleBarWidget = _mainDescWidget->titleBarWidget();
-	QWidget* objectsTitleBarWidget = _objectsWidget->titleBarWidget();
-	QWidget* actionsTitleBarWidget = _actionsWidget->titleBarWidget();
-	QWidget* descTitleBarWidget = _descWidget->titleBarWidget();
-	QWidget* inputTitleBarWidget = _inputWidget->titleBarWidget();
-	if (checked == false) {
-		_mainDescWidget->setTitleBarWidget(new QWidget(_mainDescWidget));
-		_mainDescWidget->titleBarWidget()->hide();
-		_objectsWidget->setTitleBarWidget(new QWidget(_objectsWidget));
-		_objectsWidget->titleBarWidget()->hide();
-		_actionsWidget->setTitleBarWidget(new QWidget(_actionsWidget));
-		_actionsWidget->titleBarWidget()->hide();
-		_descWidget->setTitleBarWidget(new QWidget(_descWidget));
-		_descWidget->titleBarWidget()->hide();
-		_inputWidget->setTitleBarWidget(new QWidget(_inputWidget));
-		_inputWidget->titleBarWidget()->hide();
+	QWidget* mainTitleBarWidget = _ui->dockWidgetMainDesc->titleBarWidget();
+	QWidget* objectsTitleBarWidget = _ui->dockWidgetObjects->titleBarWidget();
+	QWidget* actionsTitleBarWidget = _ui->dockWidgetActions->titleBarWidget();
+	QWidget* descTitleBarWidget = _ui->dockWidgetAdditional->titleBarWidget();
+	QWidget* inputTitleBarWidget = _ui->dockWidgetInput->titleBarWidget();
+	if (!checked) {
+		_ui->dockWidgetMainDesc->setTitleBarWidget(new QWidget(_ui->dockWidgetMainDesc));
+		_ui->dockWidgetMainDesc->titleBarWidget()->hide();
+		_ui->dockWidgetObjects->setTitleBarWidget(new QWidget(_ui->dockWidgetObjects));
+		_ui->dockWidgetObjects->titleBarWidget()->hide();
+		_ui->dockWidgetActions->setTitleBarWidget(new QWidget(_ui->dockWidgetActions));
+		_ui->dockWidgetActions->titleBarWidget()->hide();
+		_ui->dockWidgetAdditional->setTitleBarWidget(new QWidget(_ui->dockWidgetAdditional));
+		_ui->dockWidgetAdditional->titleBarWidget()->hide();
+		_ui->dockWidgetInput->setTitleBarWidget(new QWidget(_ui->dockWidgetInput));
+		_ui->dockWidgetInput->titleBarWidget()->hide();
 	} else {
-		_mainDescWidget->setTitleBarWidget(nullptr);
-		_objectsWidget->setTitleBarWidget(nullptr);
-		_actionsWidget->setTitleBarWidget(nullptr);
-		_descWidget->setTitleBarWidget(nullptr);
-		_inputWidget->setTitleBarWidget(nullptr);
+		_ui->dockWidgetMainDesc->setTitleBarWidget(nullptr);
+		_ui->dockWidgetObjects->setTitleBarWidget(nullptr);
+		_ui->dockWidgetActions->setTitleBarWidget(nullptr);
+		_ui->dockWidgetAdditional->setTitleBarWidget(nullptr);
+		_ui->dockWidgetInput->setTitleBarWidget(nullptr);
 	}
-	if (mainTitleBarWidget) {
-		delete mainTitleBarWidget;
-	}
-	if (objectsTitleBarWidget) {
-		delete objectsTitleBarWidget;
-	}
-	if (actionsTitleBarWidget) {
-		delete actionsTitleBarWidget;
-	}
-	if (descTitleBarWidget) {
-		delete descTitleBarWidget;
-	}
-	if (inputTitleBarWidget) {
-		delete inputTitleBarWidget;
-	}
+	delete mainTitleBarWidget;
+	delete objectsTitleBarWidget;
+	delete actionsTitleBarWidget;
+	delete descTitleBarWidget;
+	delete inputTitleBarWidget;
 }
 
 void MainWindow::OnToggleMenuBar(bool checked)

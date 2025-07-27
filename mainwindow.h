@@ -10,7 +10,6 @@
 #include <QAction>
 #include <QCloseEvent>
 #include <QColor>
-#include <QDockWidget>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QFont>
@@ -81,15 +80,15 @@ public:
 
 	QspListBox* GetObjects() const { return _objectsListBox; }
 
-	QDockWidget* GetVarsDock() const { return _descWidget; }
+	QDockWidget* GetVarsDock() const;
 
-	QDockWidget* GetInputDock() const { return _inputWidget; }
+	QDockWidget* GetInputDock() const;
 
-	QDockWidget* GetActionsDock() const { return _actionsWidget; }
+	QDockWidget* GetActionsDock() const;
 
-	QDockWidget* GetObjectsDock() const { return _objectsWidget; }
+	QDockWidget* GetObjectsDock() const;
 
-	QDockWidget* GetImageDock() const { return _imgViewWidget; }
+	QDockWidget* GetImageDock() const;
 
 	QString GetLastPath() { return lastPath; }
 
@@ -204,7 +203,7 @@ public:
 
 private:
 	void CreateMenuBar();
-	void CreateDockWindows();
+	void setupDockWindows();
 	void LoadSettings(QString filePath = QString());
 	void SaveSettings(QString filePath = QString());
 	void closeEvent(QCloseEvent* event);
@@ -236,13 +235,9 @@ private:
 	QspListBox* _actionsListBox; // m_actions
 
 	QspInputBox* _inputTextBox; // m_input
-	QDockWidget* _objectsWidget; // m_objects
-	QDockWidget* _actionsWidget; // m_actions
-	QDockWidget* _descWidget; // m_vars ID_VARSDESC
-	QDockWidget* _inputWidget; // m_input
+
 	DebugLogWindow* _debugLogWindow;
 	QAction* _debugLogWindowToggleAction;
-	QDockWidget* _mainDescWidget;
 	QString lastPath; // For QFileDialog
 	QString lastGame;
 
@@ -255,7 +250,6 @@ private:
 	QString m_gameFile;
 	QTimer* m_timer;
 	QspImgCanvas* m_imgView;
-	QDockWidget* _imgViewWidget;
 	int m_menuItemId;
 	QMenu* m_menu; // qsp callback menu
 	QColor m_backColor;
