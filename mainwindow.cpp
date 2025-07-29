@@ -708,8 +708,11 @@ void MainWindow::CreateMenuBar()
 	//  Help menu
 	//  About item
 	connect(_ui->actionAbout, &QAction::triggered, this, &ThisType::OnAbout);
-
+#ifndef QT_WEBENGINEWIDGETS_LIB
+	_ui->actionWebInspector->setVisible(false);
+#else
 	connect(_ui->actionWebInspector, &QAction::toggled, this, &ThisType::OnWebInspector);
+#endif
 }
 
 void MainWindow::setupDockWindows()
