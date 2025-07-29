@@ -1131,7 +1131,7 @@ void MainWindow::OnAbout()
 	QString guiCompiledDate(tr(__DATE__) + tr(", ") + tr(__TIME__));
 	QString text =
 		(tr("<h2>Qqsp</h2>"
-	        "<p>Copyright &copy; 2017-2019, Sonnix</p>"));
+	        "<p>Copyright &copy; 2017-2019, Sonnix<br/>Qt6 port by ezsh, 2025</p>"));
 	text += tr("<p>Application version: %1<br>QSP library version: %2<br>Qt library version: %3<br>Application compilation date: %4<br>Library compilation "
 	           "date: %5</p>")
 	            .arg(QApplication::applicationVersion(), version, QT_VERSION_STR, guiCompiledDate, libCompiledDate);
