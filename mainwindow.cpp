@@ -809,57 +809,20 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::keyPressEvent(QKeyEvent* event)
 {
 	int action = -1;
-	if (event->key() == Qt::Key_1) {
-		if (_actionsListBox->count() >= 1) {
-			action = 0;
-		}
+	switch (event->key()) {
+		case Qt::Key_0: action = 9; break;
+		case Qt::Key_1:
+		case Qt::Key_2:
+		case Qt::Key_3:
+		case Qt::Key_4:
+		case Qt::Key_5:
+		case Qt::Key_6:
+		case Qt::Key_7:
+		case Qt::Key_8:
+		case Qt::Key_9: action = event->key() - Qt::Key_1; break;
 	}
-	if (event->key() == Qt::Key_2) {
-		if (_actionsListBox->count() >= 2) {
-			action = 1;
-		}
-	}
-	if (event->key() == Qt::Key_3) {
-		if (_actionsListBox->count() >= 3) {
-			action = 2;
-		}
-	}
-	if (event->key() == Qt::Key_4) {
-		if (_actionsListBox->count() >= 4) {
-			action = 3;
-		}
-	}
-	if (event->key() == Qt::Key_5) {
-		if (_actionsListBox->count() >= 5) {
-			action = 4;
-		}
-	}
-	if (event->key() == Qt::Key_6) {
-		if (_actionsListBox->count() >= 6) {
-			action = 5;
-		}
-	}
-	if (event->key() == Qt::Key_7) {
-		if (_actionsListBox->count() >= 7) {
-			action = 6;
-		}
-	}
-	if (event->key() == Qt::Key_8) {
-		if (_actionsListBox->count() >= 8) {
-			action = 7;
-		}
-	}
-	if (event->key() == Qt::Key_9) {
-		if (_actionsListBox->count() >= 9) {
-			action = 8;
-		}
-	}
-	if (event->key() == Qt::Key_0) {
-		if (_actionsListBox->count() >= 10) {
-			action = 9;
-		}
-	}
-	if (action != -1) {
+
+	if (action != -1 && _actionsListBox->count() > action) {
 		if (!QSPSetSelActionIndex(action, QSP_TRUE)) {
 			ShowError();
 		}
