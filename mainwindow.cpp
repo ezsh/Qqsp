@@ -964,23 +964,23 @@ void MainWindow::ActionsListBoxDoAction(int action)
 
 void MainWindow::dropEvent(QDropEvent* event)
 {
-	if (event->mimeData()->hasUrls()) {
-		if (event->mimeData()->urls().count() > 0) {
-			if (event->mimeData()->urls().at(0).toLocalFile().endsWith(".qsp")) {
-				OpenGameFile(event->mimeData()->urls().at(0).toLocalFile());
-				event->acceptProposedAction();
-			}
-			if (event->mimeData()->urls().at(0).toLocalFile().endsWith(".sav")) {
-				if (m_isGameOpened) {
-					if (!QSPCallBacks::OpenGameStatusEx(QSPStr(event->mimeData()->urls().at(0).toLocalFile()), true)) {
-						ShowError();
-					} else {
-						ApplyParams();
-					}
-				}
-				event->acceptProposedAction();
+	if (!event->mimeData()->hasUrls() || event->mimeData()->urls().empty()) {
+		return;
+	}
+
+	QString path = event->mimeData()->urls().at(0).toLocalFile();
+	if (path.endsWith(".qsp")) {
+		OpenGameFile(path);
+		event->acceptProposedAction();
+	} else if (path.endsWith(".sav")) {
+		if (m_isGameOpened) {
+			if (!QSPCallBacks::OpenGameStatusEx(QSPStr(path), true)) {
+				ShowError();
+			} else {
+				ApplyParams();
 			}
 		}
+		event->acceptProposedAction();
 	}
 }
 
