@@ -437,7 +437,7 @@ void QSPCallBacks::OpenGame(QSPString file, QSP_BOOL isNewGame)
 	QByteArray fileData{loadFile(file)};
 	if (QSPLoadGameWorldFromData(fileData.data(), fileData.size(), isNewGame) && isNewGame) {
 		QFileInfo fileName(QSPTools::qspStrToQt(file));
-		m_gamePath = fileName.canonicalPath();
+		m_gamePath = fileName.absolutePath();
 		if (!m_gamePath.endsWith(QLatin1Char('/'))) {
 			m_gamePath += QLatin1Char('/');
 		}
@@ -467,7 +467,7 @@ bool QSPCallBacks::OpenGameStatusEx(const QSPString& file, bool isReferesh)
 			QFileDialog::getOpenFileName(m_frame, MainWindow::tr("Select saved game file"), m_frame->GetLastPath(), MainWindow::tr("Saved game files (*.sav)"));
 		m_frame->EnableControls(true);
 		if (!path.isEmpty()) {
-			m_frame->SetLastPath(QFileInfo(path).canonicalPath());
+			m_frame->SetLastPath(QFileInfo(path).absolutePath());
 			return openSave(path);
 		}
 		return false;
@@ -506,7 +506,7 @@ bool QSPCallBacks::SaveGameStatusEx(const QSPString& file, bool isRefresh)
 			QFileDialog::getSaveFileName(m_frame, MainWindow::tr("Select file to save"), m_frame->GetLastPath(), MainWindow::tr("Saved game files (*.sav)"));
 		m_frame->EnableControls(true);
 		if (!path.isEmpty()) {
-			m_frame->SetLastPath(QFileInfo(path).canonicalPath());
+			m_frame->SetLastPath(QFileInfo(path).absolutePath());
 			return makeSaveFile(path);
 		}
 		return false;
@@ -526,7 +526,7 @@ void QSPCallBacks::SaveGameStatus(QSPString file)
 void QSPCallBacks::UpdateGamePath(const QString& fileName)
 {
 	QFileInfo fileInfo(fileName);
-	m_gamePath = fileInfo.canonicalPath();
+	m_gamePath = fileInfo.absolutePath();
 	if (!m_gamePath.endsWith(QLatin1Char('/'))) {
 		m_gamePath += QLatin1Char('/');
 	}

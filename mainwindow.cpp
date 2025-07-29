@@ -878,7 +878,7 @@ void MainWindow::OpenGameFile(const QString& path)
 {
 	if (!path.isEmpty()) {
 		QFileInfo fileName(path);
-		QSPCallBacks::m_gamePath = fileName.canonicalPath();
+		QSPCallBacks::m_gamePath = fileName.absolutePath();
 		if (!QSPCallBacks::m_gamePath.endsWith("/")) {
 			QSPCallBacks::m_gamePath += "/";
 		}
@@ -890,12 +890,8 @@ void MainWindow::OpenGameFile(const QString& path)
 			m_isGameOpened = true;
 			lastGame = path;
 			QFileInfo file(path);
-			m_gameFile = file.canonicalFilePath();
-			QString filePath(file.canonicalPath());
-			if (!filePath.endsWith("/")) {
-				filePath += "/";
-			}
-			QString configString(filePath + QSP_CONFIG);
+			m_gameFile = file.absoluteFilePath();
+			QString configString(QSPCallBacks::m_gamePath + QSP_CONFIG);
 			if (configString != m_configPath && perGameConfig) {
 				if (m_configPath.isEmpty()) {
 					QFileInfo settingsFile(QApplication::applicationDirPath() + "/" + QSP_CUSTOM_CONFIG);
@@ -925,7 +921,7 @@ void MainWindow::OpenGameFile(const QString& path)
 			if (!m_isUseFont) {
 				ApplyFont(m_defaultFont, 0, 0);
 			}
-			QFileInfo cssFile(filePath + "custom.css");
+			QFileInfo cssFile(QSPCallBacks::m_gamePath + "custom.css");
 			if (cssFile.exists() && cssFile.isFile()) {
 				_mainDescTextBox->SetCustomCSS(true);
 				_descTextBox->SetCustomCSS(true);
@@ -933,7 +929,7 @@ void MainWindow::OpenGameFile(const QString& path)
 				_mainDescTextBox->SetCustomCSS(false);
 				_descTextBox->SetCustomCSS(false);
 			}
-			UpdateGamePath(filePath);
+			UpdateGamePath(QSPCallBacks::m_gamePath);
 			OnNewGame();
 			if (m_isQuit) {
 				return;
@@ -999,14 +995,14 @@ void MainWindow::OnOpenGame()
 		QFileDialog::getOpenFileName(this, tr("Select game file"), GetLastPath(), tr("QSP games (*.qsp *.gam)"), nullptr, QFileDialog::DontUseNativeDialog);
 #	endif
 	if (!path.isEmpty()) {
-		SetLastPath(QFileInfo(path).canonicalPath());
+		SetLastPath(QFileInfo(path).absolutePath());
 		OpenGameFile(path);
 	}
 #else
 	QString path = QFileDialog::getOpenFileName(
 		this, tr("Select game file"), QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation).at(0), tr("QSP games (*.qsp *.gam)"));
 	if (!path.isEmpty()) {
-		SetLastPath(QFileInfo(path).canonicalPath());
+		SetLastPath(QFileInfo(path).absolutePath());
 		OpenGameFile(path);
 	}
 	return;
@@ -1044,7 +1040,7 @@ void MainWindow::OnOpenSavedGame()
 		this, tr("Select saved game file"), GetLastPath(), tr("Saved game files (*.sav)"), nullptr, QFileDialog::DontUseNativeDialog);
 #endif
 	if (!path.isEmpty()) {
-		SetLastPath(QFileInfo(path).canonicalPath());
+		SetLastPath(QFileInfo(path).absolutePath());
 		if (!QSPCallBacks::OpenGameStatusEx(QSPStr(path), true)) {
 			ShowError();
 		} else {
@@ -1070,7 +1066,7 @@ void MainWindow::OnSaveGame()
 		}
 		QString p = GetLastPath();
 		if (QSPCallBacks::SaveGameStatusEx(QSPStr(path), true)) {
-			SetLastPath(QFileInfo(path).canonicalPath());
+			SetLastPath(QFileInfo(path).absolutePath());
 			m_savedGamePath = path;
 		} else {
 			ShowError();
