@@ -25,6 +25,7 @@ public:
 	static std::vector<QSPListItem> qspObjects();
 
 	static bool loadGameFile(QString path);
+	static bool reloadGame(const QString& gameFilePath);
 
 	static bool useCaseInsensitiveFilePath;
 

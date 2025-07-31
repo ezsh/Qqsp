@@ -81,13 +81,9 @@ public:
 	QspListBox* GetObjects() const { return _objectsListBox; }
 
 	QDockWidget* GetVarsDock() const;
-
 	QDockWidget* GetInputDock() const;
-
 	QDockWidget* GetActionsDock() const;
-
 	QDockWidget* GetObjectsDock() const;
-
 	QDockWidget* GetImageDock() const;
 
 	QString GetLastPath() { return lastPath; }
@@ -290,6 +286,7 @@ public slots:
 private slots:
 	void OnOpenGame();
 	void OnRestartGame();
+	void OnReloadGame();
 	void OnOpenSavedGame();
 	void OnSaveGame();
 	void OnOpenQuickSavedGame();

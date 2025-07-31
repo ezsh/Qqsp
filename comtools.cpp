@@ -251,3 +251,17 @@ bool QSPTools::loadGameFile(QString path)
 	data[fileSize] = data[fileSize + 1] = data[fileSize + 2] = 0;
 	return QSPLoadGameWorldFromData(data.data(), data.size(), QSP_TRUE);
 }
+
+bool QSPTools::reloadGame(const QString& gameFilePath)
+{
+	int requiredBufSize;
+	QSPSaveGameAsData(nullptr, &requiredBufSize, QSP_FALSE);
+	QByteArray buf{requiredBufSize, Qt::Uninitialized};
+	if (!QSPSaveGameAsData(buf.data(), &requiredBufSize, QSP_FALSE)) {
+		return false;
+	}
+	if (!loadGameFile(gameFilePath)) {
+		return false;
+	}
+	return QSPOpenSavedGameFromData(buf.data(), requiredBufSize, QSP_TRUE) == QSP_TRUE;
+}

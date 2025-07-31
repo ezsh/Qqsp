@@ -624,6 +624,7 @@ void MainWindow::CreateMenuBar()
 	connect(_ui->actionOpen_game, &QAction::triggered, this, &ThisType::OnOpenGame);
 	// New game item
 	connect(_ui->actionRestart_game, &QAction::triggered, this, &ThisType::OnRestartGame);
+	connect(_ui->actionReloadGame, &QAction::triggered, this, &ThisType::OnReloadGame);
 	// Exit item
 	connect(_ui->actionExit, &QAction::triggered, this, &ThisType::close);
 	// Open saved game item
@@ -1025,6 +1026,13 @@ void MainWindow::OnRestartGame()
 		} else {
 			ApplyParams();
 		}
+	}
+}
+
+void MainWindow::OnReloadGame()
+{
+	if (!QSPTools::reloadGame(m_gameFile)) {
+		ShowError();
 	}
 }
 

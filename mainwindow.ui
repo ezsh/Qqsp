@@ -39,7 +39,7 @@
      <x>0</x>
      <y>0</y>
      <width>1069</width>
-     <height>29</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="_fileMenu">
@@ -47,6 +47,7 @@
      <string>&amp;Quest</string>
     </property>
     <addaction name="actionOpen_game"/>
+    <addaction name="actionReloadGame"/>
     <addaction name="actionRestart_game"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -348,6 +349,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+I</string>
+   </property>
+  </action>
+  <action name="actionReloadGame">
+   <property name="text">
+    <string>Re&amp;load game</string>
+   </property>
+   <property name="statusTip">
+    <string>Save game state, reload game file, load the saved state</string>
    </property>
   </action>
   <zorder>dockWidgetObjects</zorder>
