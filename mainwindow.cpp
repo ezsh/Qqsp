@@ -2,7 +2,7 @@
 
 #include "callbacks_gui.h"
 #include "comtools.h"
-#include "debuglogwindow.h"
+#include "debugger/debugwindow.h"
 #include "optionsdialog.h"
 #include "qspstr.h"
 #include "webinspector.h"
@@ -118,7 +118,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 	setupDockWindows();
 
-	_debugLogWindow = new DebugLogWindow(_ui->actionDebug_log, this);
+	_debugWindow = new Debugger::DebugWindow(_ui->actionDebugTools, this);
 
 	ApplyBackColor(m_backColor);
 	ApplyFontColor(m_fontColor);
@@ -138,7 +138,7 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(m_menu, &QMenu::triggered, this, &MainWindow::OnMenu);
 
 	QSPInit();
-	QSPCallBacks::Init(this, _debugLogWindow);
+	QSPCallBacks::Init(this, _debugWindow);
 	QSPCallBacks::SetAllowHTML5Extras(m_isAllowHTML5Extras);
 	SetOverallVolume(m_volume);
 
@@ -260,6 +260,19 @@ void MainWindow::ApplyParams()
 		}
 	}
 	ApplyFont(new_font, fontType, sizeType);
+
+	bool enableDebugTools = false;
+	if (QSPGetVarValue(L"DEBUG"_qsp, 0, &val)) {
+		assert(QSP_ISNUM(val.Type));
+		enableDebugTools = QSP_NUM(val) != 0;
+	}
+	if (!enableDebugTools) {
+		QByteArray envEnableDebug = qgetenv("QQSP_ENABLE_DEBUG").toLower();
+		using namespace Qt::StringLiterals;
+		enableDebugTools = envEnableDebug == "1"_ba || envEnableDebug == "on"_ba || envEnableDebug == "true"_ba;
+	}
+
+	_ui->actionDebugTools->setEnabled(enableDebugTools);
 }
 
 void MainWindow::DeleteMenu()
@@ -955,6 +968,7 @@ void MainWindow::ActionsListBoxDoAction(int action)
 			if (!QSPExecuteSelActionCode(QSP_TRUE)) {
 				ShowError();
 			}
+			_debugWindow->scheduleUpdate();
 		}
 	}
 }
@@ -1025,6 +1039,7 @@ void MainWindow::OnRestartGame()
 			ShowError();
 		} else {
 			ApplyParams();
+			_debugWindow->scheduleUpdate();
 		}
 	}
 }
@@ -1034,6 +1049,7 @@ void MainWindow::OnReloadGame()
 	if (!QSPTools::reloadGame(m_gameFile)) {
 		ShowError();
 	}
+	_debugWindow->scheduleUpdate();
 }
 
 void MainWindow::OnOpenSavedGame()
@@ -1053,6 +1069,7 @@ void MainWindow::OnOpenSavedGame()
 			ShowError();
 		} else {
 			ApplyParams();
+			_debugWindow->scheduleUpdate();
 		}
 	}
 }
@@ -1094,6 +1111,7 @@ void MainWindow::OnOpenQuickSavedGame()
 			ShowError();
 		} else {
 			ApplyParams();
+			_debugWindow->scheduleUpdate();
 		}
 	}
 }
@@ -1243,6 +1261,7 @@ void MainWindow::OnLinkClicked(const QUrl& url)
 		if (m_isProcessEvents && !QSPExecString(QSPStr(string), QSP_TRUE)) {
 			ShowError();
 		}
+		_debugWindow->scheduleUpdate();
 	} else {
 		QDesktopServices::openUrl(url);
 	}

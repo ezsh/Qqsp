@@ -1,7 +1,7 @@
 #include "callbacks_gui.h"
 
 #include "comtools.h"
-#include "debuglogwindow.h"
+#include "debugger/debugwindow.h"
 #include "qspmsgdlg.h"
 
 #include <QAudioOutput>
@@ -24,7 +24,7 @@
 
 QString QSPCallBacks::m_gamePath;
 MainWindow* QSPCallBacks::m_frame;
-DebugLogWindow* QSPCallBacks::m_debugLogWindow;
+Debugger::DebugWindow* QSPCallBacks::m_debugWindow;
 bool QSPCallBacks::m_isHtml;
 QSPSounds QSPCallBacks::m_sounds;
 float QSPCallBacks::m_volumeCoeff;
@@ -57,10 +57,10 @@ namespace {
 	}
 } // namespace
 
-void QSPCallBacks::Init(MainWindow* frame, DebugLogWindow* debugLogWindow)
+void QSPCallBacks::Init(MainWindow* frame, Debugger::DebugWindow* debugWindow)
 {
 	m_frame = frame;
-	m_debugLogWindow = debugLogWindow;
+	m_debugWindow = debugWindow;
 	m_volumeCoeff = 1.0f;
 
 	m_isAllowHTML5Extras = false;
@@ -443,6 +443,7 @@ void QSPCallBacks::OpenGame(QSPString file, QSP_BOOL isNewGame)
 		}
 		m_frame->UpdateGamePath(m_gamePath);
 	}
+	m_debugWindow->scheduleUpdate();
 }
 
 bool QSPCallBacks::OpenGameStatusEx(const QSPString& file, bool isReferesh)
@@ -515,7 +516,7 @@ bool QSPCallBacks::SaveGameStatusEx(const QSPString& file, bool isRefresh)
 
 void QSPCallBacks::Debug(QSPString str)
 {
-	m_debugLogWindow->appendLine(QSPTools::qspStrToQt(str));
+	m_debugWindow->appendLogLine(QSPTools::qspStrToQt(str));
 }
 
 void QSPCallBacks::SaveGameStatus(QSPString file)

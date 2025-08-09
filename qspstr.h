@@ -9,7 +9,7 @@
 
 class QSPStr {
 public:
-	QSPStr(QString s);
+	QSPStr(const QString& s);
 	operator QSPString() const;
 
 private:
@@ -20,5 +20,7 @@ private:
 #endif
 	str _str;
 };
+
+QString fromQSPChars(const QSP_CHAR* str, std::size_t maxSize);
 
 #endif

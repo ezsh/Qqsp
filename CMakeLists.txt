@@ -18,6 +18,7 @@ if (WIN32)
 endif()
 
 option(NO_NATIVE_DIALOGS "Do not use native file open/sav dialogs" OFF)
+option(BUILD_DEBUGGER "Build tools to debug games" ON)
 configure_file(qqsp-config.h.cmakein qqsp-config.h @ONLY)
 
 qt_standard_project_setup(
@@ -29,33 +30,31 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 qt_add_executable(Qqsp WIN32)
 target_sources(Qqsp PRIVATE
-	debuglogwindow.h debuglogwindow.cpp
+	callbacks_gui.cpp
+	callbacks_gui.h
+	comtools.cpp
+	comtools.h
 	main.cpp
 	mainwindow.cpp
-	qsptextbox.cpp
-	qsplistbox.cpp
-	qspinputbox.cpp
-	qspimgcanvas.cpp
-	qspmsgdlg.cpp
-	qspinputdlg.cpp
-	qspstr.cpp
-	callbacks_gui.cpp
-	comtools.cpp
-	optionsdialog.cpp
-	videolabel.cpp
 	mainwindow.h
-	qsptextbox.h
-	qsplistbox.h
-	qspinputbox.h
-	qspimgcanvas.h
-	qspmsgdlg.h
-	qspinputdlg.h
-	qspstr.h
-	callbacks_gui.h
-	comtools.h
+	optionsdialog.cpp
 	optionsdialog.h
+	qspimgcanvas.cpp
+	qspimgcanvas.h
+	qspinputbox.cpp
+	qspinputbox.h
+	qspinputdlg.cpp
+	qspinputdlg.h
+	qsplistbox.cpp
+	qsplistbox.h
+	qspmsgdlg.cpp
+	qspmsgdlg.h
+	qspstr.cpp
+	qspstr.h
+	qsptextbox.cpp
+	qsptextbox.h
+	videolabel.cpp
 	videolabel.h
-	debuglogwindow.ui
 	mainwindow.ui
 	optionsdialog.ui
 	qqsp.qrc
@@ -97,6 +96,10 @@ if (Qt6LinguistTools_FOUND)
 			Qqsp.en.ts Qqsp.ru.ts Qqsp.uk.ts
 			qt_uk.ts qtbase_uk.ts
 	)
+endif()
+
+if (BUILD_DEBUGGER)
+	add_subdirectory(debugger)
 endif()
 
 # On Windows we usually do not have system-wide Qt install, let's make the built

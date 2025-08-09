@@ -39,7 +39,9 @@
 #define QSP_QUICKSAVE     "quicksave.sav"
 #define QSP_GAME          "game.qsp"
 
-class DebugLogWindow;
+namespace Debugger {
+	class DebugWindow;
+}
 class WebInspectorWindow;
 
 namespace Ui {
@@ -232,7 +234,7 @@ private:
 
 	QspInputBox* _inputTextBox; // m_input
 
-	DebugLogWindow* _debugLogWindow;
+	Debugger::DebugWindow* _debugWindow;
 	QAction* _debugLogWindowToggleAction;
 	QString lastPath; // For QFileDialog
 	QString lastGame;

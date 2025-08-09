@@ -11,7 +11,9 @@
 
 #include <map>
 
-class DebugLogWindow;
+namespace Debugger {
+	class DebugWindow;
+}
 
 struct QSPSound {
 	QSPSound();
@@ -27,7 +29,7 @@ typedef std::map<QString, QSPSound> QSPSounds;
 class QSPCallBacks {
 public:
 	// Methods
-	static void Init(MainWindow* frame, DebugLogWindow* debugLogWindow);
+	static void Init(MainWindow* frame, Debugger::DebugWindow* debugWindow);
 	static void DeInit();
 	static void SetOverallVolume(float coeff);
 	static void SetAllowHTML5Extras(bool HTML5Extras);
@@ -65,7 +67,7 @@ private:
 
 	// Fields
 	static MainWindow* m_frame;
-	static DebugLogWindow* m_debugLogWindow;
+	static Debugger::DebugWindow* m_debugWindow;
 	static bool m_isHtml;
 	static QSPSounds m_sounds;
 	static float m_volumeCoeff;

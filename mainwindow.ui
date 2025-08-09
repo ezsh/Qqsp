@@ -70,7 +70,7 @@
       <string>&amp;Show / Hide</string>
      </property>
      <addaction name="actionCaptions"/>
-     <addaction name="actionDebug_log"/>
+     <addaction name="actionDebugTools"/>
      <addaction name="actionWebInspector"/>
      <addaction name="actionHotkeys_for_actions"/>
     </widget>
@@ -329,12 +329,12 @@
     <string>Ctrl+9</string>
    </property>
   </action>
-  <action name="actionDebug_log">
+  <action name="actionDebugTools">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Debug log</string>
+    <string>&amp;Debug</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+8</string>
