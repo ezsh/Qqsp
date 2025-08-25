@@ -35,6 +35,53 @@
 
 #include <qqsp-config.h>
 
+namespace {
+	namespace SettingsKeys {
+		using namespace Qt::StringLiterals;
+
+		namespace Groups {
+			constexpr QLatin1StringView mainWindow{"mainWindow"_L1};
+			constexpr QLatin1StringView application{"application"_L1};
+			constexpr QLatin1StringView debugger{"debugger"_L1};
+		}
+
+		namespace MainWindow {
+			constexpr QLatin1StringView geometry{"geometry"_L1};
+			constexpr QLatin1StringView windowState{"windowState"_L1};
+			constexpr QLatin1StringView isMaximized{"isMaximized"_L1};
+			constexpr QLatin1StringView isFullScreen{"isFullScreen"_L1};
+			constexpr QLatin1StringView showCaptions{"showCaptions"_L1};
+		}
+
+		namespace Application {
+			constexpr QLatin1StringView showPlainText{"isShowPlainText"_L1};
+			constexpr QLatin1StringView lastPath{"lastPath"_L1};
+			constexpr QLatin1StringView perGameConfig{"perGameConfig"_L1};
+
+			constexpr QLatin1StringView useFontSize{"isUseFontSize"_L1};
+			constexpr QLatin1StringView fontSize{"fontSize"_L1};
+			constexpr QLatin1StringView useFont{"isUseFont"_L1};
+			constexpr QLatin1StringView font{"font"_L1};
+
+			constexpr QLatin1StringView useBgColor{"isUseBackColor"_L1};
+			constexpr QLatin1StringView useLinkColor{"isUseLinkColor"_L1};
+			constexpr QLatin1StringView useFontColor{"isUseFontColor"_L1};
+			constexpr QLatin1StringView bgColor{"backColor"_L1};
+			constexpr QLatin1StringView linkColor{"linkColor"_L1};
+			constexpr QLatin1StringView fontColor{"fontColor"_L1};
+			constexpr QLatin1StringView disableVideo{"disableVideo"_L1};
+			constexpr QLatin1StringView videoFix{"videoFix"_L1};
+			constexpr QLatin1StringView lastGame{"lastGame"_L1};
+			constexpr QLatin1StringView autostartLastGame{"autostartLastGame"_L1};
+			constexpr QLatin1StringView volume{"volume"_L1};
+			constexpr QLatin1StringView showHotkeys{"isShowHotkeys"_L1};
+			constexpr QLatin1StringView allowHTML5Extras{"isAllowHTML5Extras"_L1};
+			constexpr QLatin1StringView useCaseInsensitiveFilePath{"useCaseInsensitiveFilePath"_L1};
+			constexpr QLatin1StringView langid{"language"_L1};
+		} // namespace Application
+	} // namespace SettingsKeys
+} // namespace
+
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, _ui(new Ui::MainWindow())
@@ -499,136 +546,146 @@ const QString& MainWindow::gameFilePath() const
 	return m_gameFile;
 }
 
-void MainWindow::LoadSettings(QString filePath)
+QSettings MainWindow::settingsForPath(const QString& filePath)
 {
-	QSettings* settings;
 	if (filePath.isEmpty()) {
-		settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName(), this);
-	} else {
-		settings = new QSettings(filePath, QSettings::IniFormat);
+		return QSettings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName(), this);
 	}
 
-	restoreGeometry(settings->value("mainWindow/geometry").toByteArray());
+	return QSettings(filePath, QSettings::IniFormat);
+}
+
+void MainWindow::LoadSettings(const QString& filePath)
+{
+	QSettings settings{settingsForPath(filePath)};
+
+	settings.beginGroup(SettingsKeys::Groups::mainWindow);
+	restoreGeometry(settings.value(SettingsKeys::MainWindow::geometry).toByteArray());
 	if (isMaximized()) {
 		setGeometry(QApplication::screenAt(geometry().center())->availableGeometry());
 	}
-	restoreState(settings->value("mainWindow/windowState").toByteArray());
+	restoreState(settings.value(SettingsKeys::MainWindow::windowState).toByteArray());
 
-	if (settings->value("mainWindow/isMaximized", isMaximized()).toBool()) {
+	if (settings.value(SettingsKeys::MainWindow::isMaximized, isMaximized()).toBool()) {
 		showMaximized();
 	}
-	if (settings->value("mainWindow/isFullScreen", isFullScreen()).toBool()) {
+	if (settings.value(SettingsKeys::MainWindow::isFullScreen, isFullScreen()).toBool()) {
 		showFullScreen();
 	}
 
-	OnToggleCaptions(settings->value("mainWindow/showCaptions", showCaptions).toBool());
+	OnToggleCaptions(settings.value(SettingsKeys::MainWindow::showCaptions, showCaptions).toBool());
+	settings.endGroup();
 
-	SetShowPlainText(settings->value("application/isShowPlainText", showPlainText).toBool());
+	settings.beginGroup(SettingsKeys::Groups::application);
+	SetShowPlainText(settings.value(SettingsKeys::Application::showPlainText, showPlainText).toBool());
 
-	SetLastPath(settings->value("application/lastPath", GetLastPath()).toString());
-	perGameConfig = settings->value("application/perGameConfig", perGameConfig).toBool();
+	SetLastPath(settings.value(SettingsKeys::Application::lastPath, GetLastPath()).toString());
+	perGameConfig = settings.value(SettingsKeys::Application::perGameConfig, perGameConfig).toBool();
 
-	m_isUseFontSize = settings->value("application/isUseFontSize", m_isUseFontSize).toBool();
-	m_fontSize = settings->value("application/fontSize", m_fontSize).toInt();
-	m_isUseFont = settings->value("application/isUseFont", m_isUseFont).toBool();
+	m_isUseFontSize = settings.value(SettingsKeys::Application::useFontSize, m_isUseFontSize).toBool();
+	m_fontSize = settings.value(SettingsKeys::Application::fontSize, m_fontSize).toInt();
+	m_isUseFont = settings.value(SettingsKeys::Application::useFont, m_isUseFont).toBool();
 	if (m_isUseFont) {
-		ApplyFont(qvariant_cast<QFont>(settings->value("application/font", m_font)), 2, 2);
+		ApplyFont(qvariant_cast<QFont>(settings.value(SettingsKeys::Application::font, m_font)), 2, 2);
 	}
 
-	m_isUseBackColor = settings->value("application/isUseBackColor", m_isUseBackColor).toBool();
-	m_isUseLinkColor = settings->value("application/isUseLinkColor", m_isUseLinkColor).toBool();
-	m_isUseFontColor = settings->value("application/isUseFontColor", m_isUseFontColor).toBool();
+	m_isUseBackColor = settings.value(SettingsKeys::Application::useBgColor, m_isUseBackColor).toBool();
+	m_isUseLinkColor = settings.value(SettingsKeys::Application::useLinkColor, m_isUseLinkColor).toBool();
+	m_isUseFontColor = settings.value(SettingsKeys::Application::useFontColor, m_isUseFontColor).toBool();
 	if (m_isUseBackColor) {
-		ApplyBackColor(qvariant_cast<QColor>(settings->value("application/backColor", m_backColor)));
+		ApplyBackColor(qvariant_cast<QColor>(settings.value(SettingsKeys::Application::bgColor, m_backColor)));
 	}
 	if (m_isUseLinkColor) {
-		ApplyLinkColor(qvariant_cast<QColor>(settings->value("application/linkColor", m_linkColor)));
+		ApplyLinkColor(qvariant_cast<QColor>(settings.value(SettingsKeys::Application::linkColor, m_linkColor)));
 	}
 	if (m_isUseFontColor) {
-		ApplyFontColor(qvariant_cast<QColor>(settings->value("application/fontColor", m_fontColor)));
+		ApplyFontColor(qvariant_cast<QColor>(settings.value(SettingsKeys::Application::fontColor, m_fontColor)));
 	}
-	m_settingsBackColor = qvariant_cast<QColor>(settings->value("application/backColor", m_backColor));
-	m_settingsLinkColor = qvariant_cast<QColor>(settings->value("application/linkColor", m_linkColor));
-	m_settingsFontColor = qvariant_cast<QColor>(settings->value("application/fontColor", m_fontColor));
+	m_settingsBackColor = qvariant_cast<QColor>(settings.value(SettingsKeys::Application::bgColor, m_backColor));
+	m_settingsLinkColor = qvariant_cast<QColor>(settings.value(SettingsKeys::Application::linkColor, m_linkColor));
+	m_settingsFontColor = qvariant_cast<QColor>(settings.value(SettingsKeys::Application::fontColor, m_fontColor));
 
-	disableVideo = settings->value("application/disableVideo", disableVideo).toBool();
+	disableVideo = settings.value(SettingsKeys::Application::disableVideo, disableVideo).toBool();
 	SetDisableVideo(disableVideo);
-	m_videoFix = settings->value("application/videoFix", m_videoFix).toBool();
+	m_videoFix = settings.value(SettingsKeys::Application::videoFix, m_videoFix).toBool();
 	SetVideoFix(m_videoFix);
 
-	lastGame = settings->value("application/lastGame", lastGame).toString();
-	autostartLastGame = settings->value("application/autostartLastGame", autostartLastGame).toBool();
+	lastGame = settings.value(SettingsKeys::Application::lastGame, lastGame).toString();
+	autostartLastGame = settings.value(SettingsKeys::Application::autostartLastGame, autostartLastGame).toBool();
 
-	m_volume = settings->value("application/volume", m_volume).toFloat();
+	m_volume = settings.value(SettingsKeys::Application::volume, m_volume).toFloat();
 	SetOverallVolume(m_volume);
 
-	m_isShowHotkeys = settings->value("application/isShowHotkeys", m_isShowHotkeys).toBool();
+	m_isShowHotkeys = settings.value(SettingsKeys::Application::showHotkeys, m_isShowHotkeys).toBool();
 
-	m_isAllowHTML5Extras = settings->value("application/isAllowHTML5Extras", m_isAllowHTML5Extras).toBool();
+	m_isAllowHTML5Extras = settings.value(SettingsKeys::Application::allowHTML5Extras, m_isAllowHTML5Extras).toBool();
 
-	QSPTools::useCaseInsensitiveFilePath = settings->value("application/useCaseInsensitiveFilePath", QSPTools::useCaseInsensitiveFilePath).toBool();
+	QSPTools::useCaseInsensitiveFilePath = settings.value(SettingsKeys::Application::useCaseInsensitiveFilePath, QSPTools::useCaseInsensitiveFilePath).toBool();
 
-	langid = settings->value("application/language", langid).toString();
+	langid = settings.value(SettingsKeys::Application::langid, langid).toString();
+	settings.endGroup();
 
 	RefreshUI();
-	delete settings;
+
+	settings.beginGroup(SettingsKeys::Groups::debugger);
+	_debugWindow->loadSettings(settings);
+	settings.endGroup();
 }
 
-void MainWindow::SaveSettings(QString filePath)
+void MainWindow::SaveSettings(const QString& filePath)
 {
-	QSettings* settings;
-	if (filePath.isEmpty()) {
-		settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName(), this);
-	} else {
-		settings = new QSettings(filePath, QSettings::IniFormat);
-	}
+	QSettings settings{settingsForPath(filePath)};
 
 	bool maximized = isMaximized();
 
 	bool fullscreen = isFullScreen();
 
-	settings->setValue("mainWindow/geometry", saveGeometry());
-	settings->setValue("mainWindow/windowState", saveState());
-	settings->setValue("mainWindow/isMaximized", maximized);
-	settings->setValue("mainWindow/isFullScreen", fullscreen);
-	settings->setValue("mainWindow/showCaptions", showCaptions);
+	settings.beginGroup(SettingsKeys::Groups::mainWindow);
+	settings.setValue(SettingsKeys::MainWindow::geometry, saveGeometry());
+	settings.setValue(SettingsKeys::MainWindow::windowState, saveState());
+	settings.setValue(SettingsKeys::MainWindow::isMaximized, maximized);
+	settings.setValue(SettingsKeys::MainWindow::isFullScreen, fullscreen);
+	settings.setValue(SettingsKeys::MainWindow::showCaptions, showCaptions);
+	settings.endGroup();
 
-	settings->setValue("application/isShowPlainText", showPlainText);
+	settings.beginGroup(SettingsKeys::Groups::application);
+	settings.setValue(SettingsKeys::Application::showPlainText, showPlainText);
 
-	settings->setValue("application/lastPath", lastPath);
-	settings->setValue("application/perGameConfig", perGameConfig);
+	settings.setValue(SettingsKeys::Application::lastPath, lastPath);
+	settings.setValue(SettingsKeys::Application::perGameConfig, perGameConfig);
 
-	settings->setValue("application/isUseFontSize", m_isUseFontSize);
-	settings->setValue("application/fontSize", m_fontSize);
-	settings->setValue("application/isUseFont", m_isUseFont);
-	settings->setValue("application/font", m_font);
+	settings.setValue(SettingsKeys::Application::useFontSize, m_isUseFontSize);
+	settings.setValue(SettingsKeys::Application::fontSize, m_fontSize);
+	settings.setValue(SettingsKeys::Application::useFont, m_isUseFont);
+	settings.setValue(SettingsKeys::Application::font, m_font);
 
-	settings->setValue("application/isUseBackColor", m_isUseBackColor);
-	settings->setValue("application/isUseLinkColor", m_isUseLinkColor);
-	settings->setValue("application/isUseFontColor", m_isUseFontColor);
-	settings->setValue("application/backColor", m_settingsBackColor);
-	settings->setValue("application/linkColor", m_settingsLinkColor);
-	settings->setValue("application/fontColor", m_settingsFontColor);
+	settings.setValue(SettingsKeys::Application::useBgColor, m_isUseBackColor);
+	settings.setValue(SettingsKeys::Application::useLinkColor, m_isUseLinkColor);
+	settings.setValue(SettingsKeys::Application::useFontColor, m_isUseFontColor);
+	settings.setValue(SettingsKeys::Application::bgColor, m_settingsBackColor);
+	settings.setValue(SettingsKeys::Application::linkColor, m_settingsLinkColor);
+	settings.setValue(SettingsKeys::Application::fontColor, m_settingsFontColor);
 
-	settings->setValue("application/disableVideo", disableVideo);
-	settings->setValue("application/videoFix", m_videoFix);
+	settings.setValue(SettingsKeys::Application::disableVideo, disableVideo);
+	settings.setValue(SettingsKeys::Application::videoFix, m_videoFix);
 
-	settings->setValue("application/lastGame", lastGame);
-	settings->setValue("application/autostartLastGame", autostartLastGame);
+	settings.setValue(SettingsKeys::Application::lastGame, lastGame);
+	settings.setValue(SettingsKeys::Application::autostartLastGame, autostartLastGame);
 
-	settings->setValue("application/volume", m_volume);
+	settings.setValue(SettingsKeys::Application::volume, m_volume);
 
-	settings->setValue("application/isShowHotkeys", m_isShowHotkeys);
+	settings.setValue(SettingsKeys::Application::showHotkeys, m_isShowHotkeys);
 
-	settings->setValue("application/isAllowHTML5Extras", m_isAllowHTML5Extras);
+	settings.setValue(SettingsKeys::Application::allowHTML5Extras, m_isAllowHTML5Extras);
 
-	settings->setValue("application/useCaseInsensitiveFilePath", QSPTools::useCaseInsensitiveFilePath);
+	settings.setValue(SettingsKeys::Application::useCaseInsensitiveFilePath, QSPTools::useCaseInsensitiveFilePath);
 
-	settings->setValue("application/language", langid);
+	settings.setValue(SettingsKeys::Application::langid, langid);
+	settings.endGroup();
 
-	settings->sync();
-
-	delete settings;
+	settings.beginGroup(SettingsKeys::Groups::debugger);
+	_debugWindow->saveSettings(settings);
+	settings.endGroup();
 }
 
 void MainWindow::CreateMenuBar()

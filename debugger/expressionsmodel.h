@@ -4,6 +4,8 @@
 #include <QAbstractTableModel>
 #include <QVector>
 
+class QSettings;
+
 namespace Debugger {
 	class ExpressionsModel: public QAbstractTableModel {
 		using Base = QAbstractTableModel;
@@ -17,6 +19,9 @@ namespace Debugger {
 		const QString& expression(int row) const;
 		const QString& value(int row) const;
 		void clear();
+
+		void saveSettings(QSettings& settings) const;
+		void loadSettings(const QSettings& settings);
 
 		// QAbstractItemModel interface
 		int rowCount(const QModelIndex& parent = {}) const override;

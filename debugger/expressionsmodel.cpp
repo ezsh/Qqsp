@@ -6,7 +6,10 @@
 
 #include <QApplication>
 #include <QPalette>
+#include <QSettings>
+#include <QStringList>
 
+#include <algorithm>
 #include <array>
 #include <utility>
 
@@ -80,6 +83,28 @@ void Debugger::ExpressionsModel::clear()
 {
 	beginResetModel();
 	entries_.clear();
+	endResetModel();
+}
+
+void Debugger::ExpressionsModel::saveSettings(QSettings& settings) const
+{
+	using namespace Qt::StringLiterals;
+	QStringList expressions;
+	expressions.reserve(entries_.size());
+	std::ranges::transform(entries_, std::back_inserter(expressions), [](const Expression& e) { return e.expression; });
+	settings.setValue("expressions"_L1, expressions);
+}
+
+void Debugger::ExpressionsModel::loadSettings(const QSettings& settings)
+{
+	using namespace Qt::StringLiterals;
+	QStringList expressions = settings.value("expressions"_L1, QStringList{}).toStringList();
+	beginResetModel();
+	entries_.clear();
+	entries_.reserve(expressions.size());
+	for (const QString& e: expressions) {
+		entries_.emplace_back(e);
+	}
 	endResetModel();
 }
 

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 class QItemSelectionModel;
+class QSettings;
 
 namespace Ui {
 	class DebugWindow;
@@ -21,6 +22,9 @@ namespace Debugger {
 
 		void appendLogLine(QString line);
 		void scheduleUpdate();
+
+		void saveSettings(QSettings& settings);
+		void loadSettings(QSettings& settings);
 
 		// QWidget interface
 		void setVisible(bool visible) override;

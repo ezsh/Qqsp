@@ -39,6 +39,8 @@
 #define QSP_QUICKSAVE     "quicksave.sav"
 #define QSP_GAME          "game.qsp"
 
+class QSettings;
+
 namespace Debugger {
 	class DebugWindow;
 }
@@ -202,8 +204,9 @@ public:
 private:
 	void CreateMenuBar();
 	void setupDockWindows();
-	void LoadSettings(QString filePath = QString());
-	void SaveSettings(QString filePath = QString());
+	QSettings settingsForPath(const QString& filePath = QString());
+	void LoadSettings(const QString& filePath = QString());
+	void SaveSettings(const QString& filePath = QString());
 	void closeEvent(QCloseEvent* event);
 	void keyPressEvent(QKeyEvent* event);
 	void ActionsListBoxDoAction(int action);

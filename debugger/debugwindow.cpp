@@ -9,8 +9,23 @@
 #include <QClipboard>
 #include <QGuiApplication>
 #include <QItemSelectionModel>
+#include <QSettings>
 
 #include "ui_debugwindow.h"
+
+namespace {
+	namespace SettingsKeys {
+		using namespace Qt::StringLiterals;
+
+		namespace Groups {
+			constexpr QLatin1StringView expressions{"expressions"_L1};
+		}
+
+		namespace Expressions {
+			constexpr QLatin1StringView expressionColumnWidth{"expressionColumnWidth"_L1};
+		}
+	} // namespace SettingsKeys
+} // namespace
 
 Debugger::DebugWindow::DebugWindow(QAction* toggleVisibilityAction, QWidget* parent)
 	: base(parent)
@@ -70,6 +85,23 @@ void Debugger::DebugWindow::scheduleUpdate()
 	} else {
 		updateScheduled_ = true;
 	}
+}
+
+void Debugger::DebugWindow::saveSettings(QSettings& settings)
+{
+	settings.beginGroup(SettingsKeys::Groups::expressions);
+	expressionsModel_->saveSettings(settings);
+	settings.setValue(SettingsKeys::Expressions::expressionColumnWidth, ui_->tableViewExpressions->columnWidth(0));
+	settings.endGroup();
+}
+
+void Debugger::DebugWindow::loadSettings(QSettings& settings)
+{
+	settings.beginGroup(SettingsKeys::Groups::expressions);
+	expressionsModel_->loadSettings(settings);
+	ui_->tableViewExpressions->setColumnWidth(
+		0, settings.value(SettingsKeys::Expressions::expressionColumnWidth, ui_->tableViewExpressions->columnWidth(0)).toInt());
+	settings.endGroup();
 }
 
 void Debugger::DebugWindow::setVisible(bool visible)
