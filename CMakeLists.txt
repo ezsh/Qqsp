@@ -11,6 +11,8 @@ set(CMAKE_CXX_SCAN_FOR_MODULES off)
 
 set(MINIMAL_QT_VERSION 6.7)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+
 find_package(Qt6 ${MINIMAL_QT_VERSION} COMPONENTS LinguistTools WebEngineCore WebEngineWidgets)
 find_package(Qt6 ${MINIMAL_QT_VERSION} REQUIRED COMPONENTS Core Gui Multimedia MultimediaWidgets Widgets)
 find_package(Qsp REQUIRED)
