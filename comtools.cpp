@@ -218,12 +218,11 @@ QColor QSPTools::wxtoQColor(int wxColor)
 }
 
 namespace {
-	using qspObjectGetter = int(QSPListItem* items, int bufferSize);
-
-	std::vector<QSPListItem> listQspItems(qspObjectGetter getter)
+	template <typename Item, typename Getter = int(Item* items, int bufferSize)>
+	std::vector<Item> listQspItems(Getter getter)
 	{
 		int count = getter(nullptr, 0);
-		std::vector<QSPListItem> res(count);
+		std::vector<Item> res(count);
 		getter(res.data(), res.size());
 		return res;
 	}
@@ -231,12 +230,12 @@ namespace {
 
 std::vector<QSPListItem> QSPTools::qspActions()
 {
-	return listQspItems(QSPGetActions);
+	return listQspItems<QSPListItem>(QSPGetActions);
 }
 
-std::vector<QSPListItem> QSPTools::qspObjects()
+std::vector<QSPObjectItem> QSPTools::qspObjects()
 {
-	return listQspItems(QSPGetObjects);
+	return listQspItems<QSPObjectItem>(QSPGetObjects);
 }
 
 bool QSPTools::loadGameFile(QString path)

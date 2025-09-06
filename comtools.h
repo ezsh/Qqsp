@@ -22,7 +22,7 @@ public:
 	static QColor wxtoQColor(int wxColor);
 
 	static std::vector<QSPListItem> qspActions();
-	static std::vector<QSPListItem> qspObjects();
+	static std::vector<QSPObjectItem> qspObjects();
 
 	static bool loadGameFile(QString path);
 	static bool reloadGame(const QString& gameFilePath);

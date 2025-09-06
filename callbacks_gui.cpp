@@ -124,6 +124,8 @@ void QSPCallBacks::SetTimer(int msecs)
 
 void QSPCallBacks::RefreshInt(QSP_BOOL isForced, QSP_BOOL isNewDesc)
 {
+	using namespace Qt::StringLiterals;
+
 	QSPVariant val;
 	bool isScroll, isCanSave;
 	if (m_frame->IsQuit()) {
@@ -140,7 +142,8 @@ void QSPCallBacks::RefreshInt(QSP_BOOL isForced, QSP_BOOL isNewDesc)
 	m_isHtml = QSPGetVarValue(L"USEHTML"_qsp, 0, &val) && QSP_NUM(val);
 	// -------------------------------
 	m_frame->GetVars()->SetIsHtml(m_isHtml);
-	if (QSPIsVarsDescChanged()) {
+	const int windowStateChanges = QSPGetWindowsChangedState();
+	if (windowStateChanges & QSP_WIN_VARS) {
 		m_frame->EnableControls(false, true);
 		if (m_isAllowHTML5Extras) {
 			if (QSPGetVarValue(L"SETSTATHEAD"_qsp, 0, &val) && QSP_STR(val).Str) {
@@ -155,7 +158,7 @@ void QSPCallBacks::RefreshInt(QSP_BOOL isForced, QSP_BOOL isNewDesc)
 	// -------------------------------
 	isScroll = !isNewDesc;
 	m_frame->GetDesc()->SetIsHtml(m_isHtml);
-	if (QSPIsMainDescChanged()) {
+	if (windowStateChanges & QSP_WIN_MAIN) {
 		m_frame->EnableControls(false, true);
 		if (m_isAllowHTML5Extras) {
 			if (QSPGetVarValue(L"SETMAINDESCHEAD"_qsp, 0, &val) && QSP_STR(val).Str) {
@@ -170,7 +173,7 @@ void QSPCallBacks::RefreshInt(QSP_BOOL isForced, QSP_BOOL isNewDesc)
 	// -------------------------------
 	m_frame->GetActions()->SetIsHtml(m_isHtml);
 	m_frame->GetActions()->SetIsShowNums(m_frame->IsShowHotkeys());
-	if (QSPIsActionsChanged()) {
+	if (windowStateChanges & QSP_WIN_ACTS) {
 		std::vector<QSPListItem> actions = QSPTools::qspActions();
 		m_frame->GetActions()->BeginItems();
 		for (const QSPListItem& li: actions) {
@@ -180,11 +183,13 @@ void QSPCallBacks::RefreshInt(QSP_BOOL isForced, QSP_BOOL isNewDesc)
 	}
 	m_frame->GetActions()->SetSelection(QSPGetSelActionIndex());
 	m_frame->GetObjects()->SetIsHtml(m_isHtml);
-	if (QSPIsObjectsChanged()) {
-		std::vector<QSPListItem> objects = QSPTools::qspObjects();
+	if (windowStateChanges & QSP_WIN_OBJS) {
+		std::vector<QSPObjectItem> objects = QSPTools::qspObjects();
 		m_frame->GetObjects()->BeginItems();
-		for (const QSPListItem& li: objects) {
-			m_frame->GetObjects()->AddItem(QSPTools::GetCaseInsensitiveFilePath(m_gamePath, QSPTools::qspStrToQt(li.Image)), QSPTools::qspStrToQt(li.Name));
+		for (const QSPObjectItem& li: objects) {
+			m_frame->GetObjects()->AddItem(
+				QSPTools::GetCaseInsensitiveFilePath(m_gamePath, QSPTools::qspStrToQt(li.Image)),
+				"%1 [%2]"_L1.arg(QSPTools::qspStrToQt(li.Name), QSPTools::qspStrToQt(li.Title)));
 		}
 		m_frame->GetObjects()->EndItems();
 	}
