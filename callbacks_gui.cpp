@@ -487,7 +487,7 @@ bool QSPCallBacks::SaveGameStatusEx(const QSPString& file, bool isRefresh)
 	}
 
 	const auto makeSaveFile = [isRefresh](QString file) -> bool {
-		int requiredBufSize;
+		int requiredBufSize = 0;
 		QSPSaveGameAsData(nullptr, &requiredBufSize, isRefresh ? QSP_TRUE : QSP_FALSE);
 		QByteArray buf{requiredBufSize, Qt::Uninitialized};
 		if (QSPSaveGameAsData(buf.data(), &requiredBufSize, isRefresh ? QSP_TRUE : QSP_FALSE)) {

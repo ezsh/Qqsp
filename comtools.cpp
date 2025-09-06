@@ -254,7 +254,7 @@ bool QSPTools::loadGameFile(QString path)
 
 bool QSPTools::reloadGame(const QString& gameFilePath)
 {
-	int requiredBufSize;
+	int requiredBufSize = 0;
 	QSPSaveGameAsData(nullptr, &requiredBufSize, QSP_FALSE);
 	QByteArray buf{requiredBufSize, Qt::Uninitialized};
 	if (!QSPSaveGameAsData(buf.data(), &requiredBufSize, QSP_FALSE)) {
