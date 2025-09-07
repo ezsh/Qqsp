@@ -269,11 +269,20 @@ void QSPCallBacks::ShowPane(int type, QSP_BOOL isShow)
 	if (m_frame->IsQuit()) {
 		return;
 	}
-	switch (type) {
-		case QSP_WIN_ACTS: m_frame->GetActionsDock()->setVisible(isShow != QSP_FALSE); break;
-		case QSP_WIN_OBJS: m_frame->GetObjectsDock()->setVisible(isShow != QSP_FALSE); break;
-		case QSP_WIN_VARS: m_frame->GetVarsDock()->setVisible(isShow != QSP_FALSE); break;
-		case QSP_WIN_INPUT: m_frame->GetInputDock()->setVisible(isShow != QSP_FALSE); break;
+	if (type & QSP_WIN_ACTS) {
+		m_frame->GetActionsDock()->setVisible(isShow != QSP_FALSE);
+	}
+	if (type & QSP_WIN_OBJS) {
+		m_frame->GetObjectsDock()->setVisible(isShow != QSP_FALSE);
+	}
+	if (type & QSP_WIN_VARS) {
+		m_frame->GetVarsDock()->setVisible(isShow != QSP_FALSE);
+	}
+	if (type & QSP_WIN_INPUT) {
+		m_frame->GetInputDock()->setVisible(isShow != QSP_FALSE);
+	}
+	if (type & QSP_WIN_VIEW) {
+		m_frame->GetImageDock()->setVisible(isShow != QSP_FALSE);
 	}
 }
 
