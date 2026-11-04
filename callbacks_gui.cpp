@@ -81,14 +81,14 @@ void QSPCallBacks::Init(MainWindow* frame, Debugger::DebugWindow* debugWindow)
 	QSPSetCallback(QSP_CALL_SHOWMENU, (QSP_CALLBACK)&ShowMenu);
 	// QSP_CALL_SHOWMSGSTR,      /* void func(QSPString text) */
 	QSPSetCallback(QSP_CALL_SHOWMSGSTR, (QSP_CALLBACK)&Msg);
-	// QSP_CALL_REFRESHINT,      /* void func(QSP_BOOL isForced) */
+	// QSP_CALL_REFRESHINT,      /* void func(QSP_BOOL isForced, QSP_BOOL isNewLoc) */
 	QSPSetCallback(QSP_CALL_REFRESHINT, (QSP_CALLBACK)&RefreshInt);
 	// QSP_CALL_SETTIMER,        /* void func(int msecs) */
 	QSPSetCallback(QSP_CALL_SETTIMER, (QSP_CALLBACK)&SetTimer);
 	// QSP_CALL_SETINPUTSTRTEXT, /* void func(QSPString text) */
 	QSPSetCallback(QSP_CALL_SETINPUTSTRTEXT, (QSP_CALLBACK)&SetInputStrText);
 	// QSP_CALL_SYSTEM,          /* void func(QSPString cmd) */
-	// QSP_CALL_OPENGAME,        /* void func(QSP_BOOL isNewGame) */
+	// QSP_CALL_OPENGAME,        /* void func(QSPString file, QSP_BOOL isNewGame) */
 	QSPSetCallback(QSP_CALL_OPENGAME, (QSP_CALLBACK)&OpenGame);
 	// QSP_CALL_OPENGAMESTATUS,  /* void func(QSPString file) */
 	QSPSetCallback(QSP_CALL_OPENGAMESTATUS, (QSP_CALLBACK)&OpenGameStatus);
@@ -137,16 +137,16 @@ void QSPCallBacks::RefreshInt(QSP_BOOL isForced, QSP_BOOL isNewDesc)
 	const QSPString mainDesc = QSPGetMainDesc();
 	const QSPString varsDesc = QSPGetVarsDesc();
 	// -------------------------------
-	isScroll = !(QSPGetVarValue(L"DISABLESCROLL"_qsp, 0, &val) && QSP_NUM(val));
-	isCanSave = !(QSPGetVarValue(L"NOSAVE"_qsp, 0, &val) && QSP_NUM(val));
-	m_isHtml = QSPGetVarValue(L"USEHTML"_qsp, 0, &val) && QSP_NUM(val);
+	isScroll = !(QSPGetVarValue(L"DISABLESCROLL"_qsp, 0, &val, nullptr) && QSP_NUM(val));
+	isCanSave = !(QSPGetVarValue(L"NOSAVE"_qsp, 0, &val, nullptr) && QSP_NUM(val));
+	m_isHtml = QSPGetVarValue(L"USEHTML"_qsp, 0, &val, nullptr) && QSP_NUM(val);
 	// -------------------------------
 	m_frame->GetVars()->SetIsHtml(m_isHtml);
 	const int windowStateChanges = QSPGetWindowsChangedState();
 	if (windowStateChanges & QSP_WIN_VARS) {
 		m_frame->EnableControls(false, true);
 		if (m_isAllowHTML5Extras) {
-			if (QSPGetVarValue(L"SETSTATHEAD"_qsp, 0, &val) && QSP_STR(val).Str) {
+			if (QSPGetVarValue(L"SETSTATHEAD"_qsp, 0, &val, nullptr) && QSP_STR(val).Str) {
 				m_frame->GetVars()->SetHead(QSPTools::qspStrToQt(QSP_STR(val)));
 			} else {
 				m_frame->GetVars()->SetHead(QString(""));
@@ -161,7 +161,7 @@ void QSPCallBacks::RefreshInt(QSP_BOOL isForced, QSP_BOOL isNewDesc)
 	if (windowStateChanges & QSP_WIN_MAIN) {
 		m_frame->EnableControls(false, true);
 		if (m_isAllowHTML5Extras) {
-			if (QSPGetVarValue(L"SETMAINDESCHEAD"_qsp, 0, &val) && QSP_STR(val).Str) {
+			if (QSPGetVarValue(L"SETMAINDESCHEAD"_qsp, 0, &val, nullptr) && QSP_STR(val).Str) {
 				m_frame->GetDesc()->SetHead(QSPTools::qspStrToQt(QSP_STR(val)));
 			} else {
 				m_frame->GetDesc()->SetHead(QString(""));
@@ -195,7 +195,7 @@ void QSPCallBacks::RefreshInt(QSP_BOOL isForced, QSP_BOOL isNewDesc)
 	}
 	m_frame->GetObjects()->SetSelection(QSPGetSelObjectIndex());
 	// -------------------------------
-	if (QSPGetVarValue(L"BACKIMAGE"_qsp, 0, &val) && QSP_STR(val).Str) {
+	if (QSPGetVarValue(L"BACKIMAGE"_qsp, 0, &val, nullptr) && QSP_STR(val).Str) {
 		m_frame->GetDesc()->LoadBackImage(QSPTools::GetCaseInsensitiveFilePath(m_gamePath, QSPTools::qspStrToQt(QSP_STR(val))));
 	} else {
 		m_frame->GetDesc()->LoadBackImage(QString(""));

@@ -31,6 +31,9 @@
 #	include <QStandardPaths>
 #endif
 
+#include <limits>
+#include <random>
+
 #include "ui_mainwindow.h"
 
 #include <qqsp-config.h>
@@ -184,7 +187,11 @@ MainWindow::MainWindow(QWidget* parent)
 	m_menu->setObjectName(QStringLiteral("m_menu"));
 	connect(m_menu, &QMenu::triggered, this, &MainWindow::OnMenu);
 
-	QSPInit();
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<unsigned> distrib(0, std::numeric_limits<unsigned>::max());
+	QSPInit(distrib(gen));
+
 	QSPCallBacks::Init(this, _debugWindow);
 	QSPCallBacks::SetAllowHTML5Extras(m_isAllowHTML5Extras);
 	SetOverallVolume(m_volume);
@@ -226,7 +233,7 @@ void MainWindow::ApplyParams()
 	setPalette(m_palette);
 	// --------------
 	if (!m_isUseBackColor) {
-		if (QSPGetVarValue(L"BCOLOR"_qsp, 0, &val)) {
+		if (QSPGetVarValue(L"BCOLOR"_qsp, 0, &val, nullptr)) {
 			assert(QSP_ISNUM(val.Type));
 			if (QSP_NUM(val) == 0) {
 				setBackColor = m_defaultBackColor;
@@ -242,7 +249,7 @@ void MainWindow::ApplyParams()
 	ApplyBackColor(setBackColor);
 	// --------------
 	if (!m_isUseFontColor) {
-		if (QSPGetVarValue(L"FCOLOR"_qsp, 0, &val)) {
+		if (QSPGetVarValue(L"FCOLOR"_qsp, 0, &val, nullptr)) {
 			assert(QSP_ISNUM(val.Type));
 			if (QSP_NUM(val) == 0) {
 				setFontColor = m_defaultFontColor;
@@ -258,7 +265,7 @@ void MainWindow::ApplyParams()
 	ApplyFontColor(setFontColor);
 	// --------------
 	if (!m_isUseLinkColor) {
-		if (QSPGetVarValue(L"LCOLOR"_qsp, 0, &val)) {
+		if (QSPGetVarValue(L"LCOLOR"_qsp, 0, &val, nullptr)) {
 			assert(QSP_ISNUM(val.Type));
 			if (QSP_NUM(val) == 0) {
 				setLinkColor = m_defaultLinkColor;
@@ -277,7 +284,7 @@ void MainWindow::ApplyParams()
 	int fontType = 0;
 	int sizeType = 0;
 	if (!m_isUseFont) {
-		if (QSPGetVarValue(L"FNAME"_qsp, 0, &val)) {
+		if (QSPGetVarValue(L"FNAME"_qsp, 0, &val, nullptr)) {
 			assert(QSP_ISSTR(val.Type));
 			if (QSP_STR(val).Str) {
 				if (!QSPTools::qspStrToQt(QSP_STR(val)).isEmpty()) {
@@ -287,7 +294,7 @@ void MainWindow::ApplyParams()
 			}
 		}
 		if (!m_isUseFontSize) {
-			if (QSPGetVarValue(L"FSIZE"_qsp, 0, &val)) {
+			if (QSPGetVarValue(L"FSIZE"_qsp, 0, &val, nullptr)) {
 				assert(QSP_ISNUM(val.Type));
 				if (QSP_NUM(val) != 0) {
 					new_font.setPointSize(QSP_NUM(val));
@@ -309,7 +316,7 @@ void MainWindow::ApplyParams()
 	ApplyFont(new_font, fontType, sizeType);
 
 	bool enableDebugTools = false;
-	if (QSPGetVarValue(L"DEBUG"_qsp, 0, &val)) {
+	if (QSPGetVarValue(L"DEBUG"_qsp, 0, &val, nullptr)) {
 		assert(QSP_ISNUM(val.Type));
 		enableDebugTools = QSP_NUM(val) != 0;
 	}
