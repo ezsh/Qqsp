@@ -250,11 +250,11 @@ void QSPCallBacks::CloseFile(QSPString file)
 
 void QSPCallBacks::PlayFile(QSPString file, int volume)
 {
-	UpdateSounds();
 	if (SetVolume(file, volume)) {
 		return;
 	}
 	CloseFile(file);
+	UpdateSounds();
 	QString strFile(QFileInfo(m_gamePath + QSPTools::GetCaseInsensitiveFilePath(m_gamePath, QSPTools::qspStrToQt(file))).absoluteFilePath());
 	QSPSound& sound = m_sounds.emplace(strFile, QSPSound{}).first->second;
 	sound.player->setSource(QUrl::fromLocalFile(strFile));
