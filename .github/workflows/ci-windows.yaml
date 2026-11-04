@@ -91,7 +91,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=RelWithDebInfo `
             -DCMAKE_INSTALL_PREFIX="${{ env.install_path }}" `
             -DCMAKE_TOOLCHAIN_FILE="${{ env.vcpkg_path }}/scripts/buildsystems/vcpkg.cmake" `
-            -DQsp_DIR="${{ env.qsp_path }}/build"
+            -DQsp_DIR="${{ env.qsp_path }}/build/cmake/Qsp"
           cmake --build build
 
       - name: Prepare build artifacts
