@@ -17,7 +17,7 @@ linux-gcc:
     - cd ..
     - mkdir Qqsp && cd Qqsp
     - ls $CI_PROJECT_DIR/build/qsp
-    - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DQsp_DIR=$CI_PROJECT_DIR/build/qsp ../..
+    - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DQsp_DIR=$CI_PROJECT_DIR/build/qsp/cmake/Qsp ../..
     - cmake --build .
 
 windows:
