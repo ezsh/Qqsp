@@ -244,14 +244,13 @@ void QSPCallBacks::CloseFile(QSPString file)
 			m_sounds.erase(elem);
 		}
 	} else {
-		for (QSPSounds::iterator i = m_sounds.begin(); i != m_sounds.end(); ++i) {
-			m_sounds.clear();
-		}
+		m_sounds.clear();
 	}
 }
 
 void QSPCallBacks::PlayFile(QSPString file, int volume)
 {
+	UpdateSounds();
 	if (SetVolume(file, volume)) {
 		return;
 	}
@@ -261,7 +260,6 @@ void QSPCallBacks::PlayFile(QSPString file, int volume)
 	sound.player->setSource(QUrl::fromLocalFile(strFile));
 	sound.output->setVolume(volume * m_volumeCoeff);
 	sound.player->play();
-	UpdateSounds();
 }
 
 void QSPCallBacks::ShowPane(int type, QSP_BOOL isShow)
