@@ -31,29 +31,19 @@ float QSPCallBacks::m_volumeCoeff;
 bool QSPCallBacks::m_isAllowHTML5Extras;
 
 namespace {
-	QByteArray loadFile(const QString& path)
+	QByteArray loadFile(const QFileInfo& file)
 	{
-		if (path.isEmpty()) {
+		if (!file.isReadable()) {
 			return {};
 		}
 
-		QFileInfo fileInfo(path);
-		if (fileInfo.exists() && fileInfo.isFile()) {
-			QFile inp{fileInfo.filePath()};
+		if (file.exists() && file.isFile()) {
+			QFile inp{file.filePath()};
 			if (inp.open(QIODevice::ReadOnly)) {
 				return inp.readAll();
 			}
 		}
 		return {};
-	}
-
-	QByteArray loadFile(const QSPString& path)
-	{
-		if (!path.Str) {
-			return {};
-		}
-
-		return loadFile(QSPTools::qspStrToQt(path));
 	}
 } // namespace
 
@@ -446,9 +436,12 @@ void QSPCallBacks::OpenGame(QSPString file, QSP_BOOL isNewGame)
 	if (!file.Str) {
 		return;
 	}
-	QByteArray fileData{loadFile(file)};
+	QFileInfo fileName{QSPTools::qspStrToQt(file)};
+	if (!fileName.isAbsolute()) {
+		fileName.setFile(QDir{m_gamePath}, fileName.filePath());
+	}
+	QByteArray fileData{loadFile(fileName)};
 	if (QSPLoadGameWorldFromData(fileData.data(), fileData.size(), isNewGame) && isNewGame) {
-		QFileInfo fileName(QSPTools::qspStrToQt(file));
 		m_gamePath = fileName.absolutePath();
 		if (!m_gamePath.endsWith(QLatin1Char('/'))) {
 			m_gamePath += QLatin1Char('/');
@@ -465,7 +458,11 @@ bool QSPCallBacks::OpenGameStatusEx(const QSPString& file, bool isReferesh)
 	}
 
 	const auto openSave = [isReferesh](QString path) -> bool {
-		QByteArray data = loadFile(path);
+		QFileInfo file{path};
+		if (!file.isAbsolute()) {
+			file.setFile(QDir{m_gamePath}, path);
+		}
+		QByteArray data = loadFile(file);
 		if (!data.isEmpty()) {
 			return QSPOpenSavedGameFromData(data.data(), data.size(), isReferesh ? QSP_TRUE : QSP_FALSE);
 		}
